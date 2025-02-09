@@ -1,0 +1,48 @@
+// Variables
+:root {
+  // Light theme
+  --background-light: #f3f3f3;
+  --surface-light: #ffffff;
+  --text-light: #202124;
+  --text-secondary-light: #5f6368;
+  --border-light: #e0e0e0;
+  --tab-hover-light: #eaeaea;
+  --tab-selected-light: #ffffff;
+  --accent-light: #1a73e8;
+  
+  // Dark theme
+  --background-dark: #202124;
+  --surface-dark: #292a2d;
+  --text-dark: #ffffff;
+  --text-secondary-dark: #9aa0a6;
+  --border-dark: #3c4043;
+  --tab-hover-dark: #35363a;
+  --tab-selected-dark: #292a2d;
+  --accent-dark: #8ab4f8;
+}
+
+// Theme-aware variables
+body.light-theme {
+  --background: var(--background-light);
+  --surface: var(--surface-light);
+  --text: var(--text-light);
+  --text-secondary: var(--text-secondary-light);
+  --border: var(--border-light);
+  --tab-hover: var(--tab-hover-light);
+  --tab-selected: var(--tab-selected-light);
+  --accent: var(--accent-light);
+}
+
+body.dark-theme {
+  --background: var(--background-dark);
+  --surface: var(--surface-dark);
+  --text: var(--text-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --border: var(--border-dark);
+  --tab-hover: var(--tab-hover-dark);
+  --tab-selected: var(--tab-selected-dark);
+  --accent: var(--accent-dark);
+}
+
+// Import component styles
+@import 'TabPanel.scss';

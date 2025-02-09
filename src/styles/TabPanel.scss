@@ -1,0 +1,95 @@
+html {
+  height: 100%;
+  
+  &.dark-theme {
+    color-scheme: dark;
+  }
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.tab-panel {
+  --background-color: #f3f3f3;
+  --surface-color: #ffffff;
+  --text-color: #202124;
+  --border-color: #e0e0e0;
+  --tab-hover-color: #eaeaea;
+  --tab-selected-color: #ffffff;
+  --accent-color: #1a73e8;
+
+  &.dark-theme {
+    --background-color: #202124;
+    --surface-color: #292a2d;
+    --text-color: #ffffff;
+    --border-color: #3c4043;
+    --tab-hover-color: #35363a;
+    --tab-selected-color: #292a2d;
+    --accent-color: #8ab4f8;
+  }
+
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+  &__header {
+    display: flex;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    height: 32px;
+    padding: 0 8px;
+  }
+
+  &__tab {
+    padding: 4px 8px;
+    margin: 4px 2px;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-color);
+    cursor: pointer;
+    border: none;
+    background: none;
+    position: relative;
+    border-radius: 4px;
+    font-family: inherit;
+    
+    &:hover {
+      background-color: var(--tab-hover-color);
+    }
+    
+    &--active {
+      background-color: var(--tab-selected-color);
+      color: var(--accent-color);
+      font-weight: 500;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--accent-color);
+      }
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .tab-content {
+    font-family: inherit;
+  }
+}

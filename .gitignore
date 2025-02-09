@@ -1,0 +1,9 @@
+node_modules
+extension
+/.idea/.gitignore
+/.idea/deployment.xml
+/.idea/DevTools.ext.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/vcs.xml

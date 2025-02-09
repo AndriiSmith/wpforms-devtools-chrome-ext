@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "WPForms DevTools Extension",
+  "version": "1.0",
+  "description": "Chrome DevTools extension for WPForms",
+  "devtools_page": "devtools.html",
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
