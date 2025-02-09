@@ -43,16 +43,49 @@ export function UtilsList() {
 
     // Підписуємось на оновлення сторінки
     const navigationListener = () => {
-      processMenuItems();
+      setTimeout(processMenuItems, 500); // Даємо час на завантаження DOM
     };
+
+    // Підписуємось на події навігації та оновлення
     chrome.devtools.network.onNavigated.addListener(navigationListener);
 
-    // Періодично оновлюємо статус чекбоксів
-    const checkboxInterval = setInterval(processMenuItems, 1000);
+    // Підписуємось на події ресурсів (включаючи перезавантаження)
+    const resourceListener = (resource) => {
+      if (resource.type === 'document' && resource.url === chrome.devtools.inspectedWindow.tabId) {
+        setTimeout(processMenuItems, 500);
+      }
+    };
+    chrome.devtools.network.onRequestFinished.addListener(resourceListener);
+
+    // Додаємо обробник для події DOMContentLoaded
+    const domLoadedScript = `
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.target.id === 'wp-admin-bar-wpf-utils-default') {
+            window.postMessage({ type: 'WPF_UTILS_UPDATED' }, '*');
+          }
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    `;
+    
+    chrome.devtools.inspectedWindow.eval(domLoadedScript);
+
+    const messageListener = (event) => {
+      if (event.data.type === 'WPF_UTILS_UPDATED') {
+        processMenuItems();
+      }
+    };
+    window.addEventListener('message', messageListener);
 
     return () => {
       chrome.devtools.network.onNavigated.removeListener(navigationListener);
-      clearInterval(checkboxInterval);
+      chrome.devtools.network.onRequestFinished.removeListener(resourceListener);
+      window.removeEventListener('message', messageListener);
     };
   }, []);
 
