@@ -24,6 +24,25 @@ export function LogsTable() {
         console.log('Processing response...');
         const parser = new DOMParser();
         const doc = parser.parseFromString(content, 'text/html');
+        
+        // Отримуємо дані з wpforms_admin
+        const wpformsScript = doc.querySelector('script#wpforms-admin-js-extra');
+        let wpformsAdmin = null;
+        
+        if (wpformsScript) {
+          try {
+            // Витягуємо JSON з var wpforms_admin = {...}
+            const scriptContent = wpformsScript.textContent;
+            const match = scriptContent.match(/var\s+wpforms_admin\s*=\s*({.*?});/s);
+            if (match) {
+              wpformsAdmin = JSON.parse(match[1]);
+              console.log('WPForms Admin data:', wpformsAdmin);
+            }
+          } catch (error) {
+            console.error('Error parsing wpforms_admin:', error);
+          }
+        }
+
         const table = doc.querySelector('.wp-list-table');
         
         if (table) {
