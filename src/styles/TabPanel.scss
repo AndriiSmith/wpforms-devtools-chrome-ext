@@ -12,24 +12,6 @@ body {
 }
 
 .tab-panel {
-  --background-color: #f3f3f3;
-  --surface-color: #ffffff;
-  --text-color: #202124;
-  --border-color: #e0e0e0;
-  --tab-hover-color: #eaeaea;
-  --tab-selected-color: #ffffff;
-  --accent-color: #1a73e8;
-
-  &.dark-theme {
-    --background-color: #202124;
-    --surface-color: #292a2d;
-    --text-color: #ffffff;
-    --border-color: #3c4043;
-    --tab-hover-color: #35363a;
-    --tab-selected-color: #292a2d;
-    --accent-color: #8ab4f8;
-  }
-
   height: 100vh;
   display: flex;
   flex-direction: column;

@@ -1,12 +1,19 @@
+// Logs Table styles
 .logs-table {
   height: 100%;
   overflow: auto;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 12px;
+  background-color: var(--surface-color);
+  color: var(--text-color);
 
   table {
     width: 100%;
     border-collapse: collapse;
+  }
+
+  tfoot {
+    display: none;
   }
 
   th {
@@ -15,50 +22,25 @@
     font-weight: 500;
     position: sticky;
     top: 0;
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
   }
 
   td {
     padding: 4px 8px;
     white-space: nowrap;
+    border-bottom: 1px solid var(--border-color);
+
+    .toggle-row {
+      display: none;
+    }
   }
 
   tr {
     height: 21px;
-  }
 
-  // Світла тема
-  background-color: #fff;
-  color: #333;
-
-  th {
-    background-color: #f3f3f3;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  td {
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  tr:hover {
-    background-color: #f0f0f0;
-  }
-
-  // Темна тема
-  &.dark-theme {
-    background-color: #202124;
-    color: #e8eaed;
-
-    th {
-      background-color: #202124;
-      border-bottom: 1px solid #454545;
-    }
-
-    td {
-      border-bottom: 1px solid #454545;
-    }
-
-    tr:hover {
-      background-color: #454545;
+    &:hover {
+      background-color: var(--tab-hover);
     }
   }
 
