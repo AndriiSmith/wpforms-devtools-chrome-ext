@@ -47,3 +47,54 @@ body.dark-theme {
 // Import component styles
 @import './TabPanel.scss';
 @import './UtilsList.scss';
+
+// Logs Table styles
+.logs-table {
+  height: 100%;
+  overflow: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  background-color: var(--surface);
+  color: var(--text);
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 4px 8px;
+    text-align: left;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 4px 8px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+
+    .toggle-row {
+      display: none;
+    }
+  }
+
+  tr {
+    height: 21px;
+
+    &:hover {
+      background-color: var(--tab-hover);
+    }
+  }
+
+  // Стан завантаження
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+}

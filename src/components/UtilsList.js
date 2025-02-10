@@ -10,7 +10,7 @@ export function UtilsList() {
       const script = `
         function getMenuItems(element) {
           return Array.from(element.children).map(li => {
-            const link = li.querySelector('a');
+            const link = li.querySelector('.ab-empty-item, .ab-item');
             const checkbox = li.querySelector('input[type="checkbox"]');
             const submenu = li.querySelector('.ab-submenu');
             const item = {
@@ -92,6 +92,8 @@ export function UtilsList() {
   if (utils.length === 0) {
     return <div className="utils-list utils-list--empty">No utilities found</div>;
   }
+
+  console.log('Utils:', utils);
 
   return (
     <div className="utils-list">

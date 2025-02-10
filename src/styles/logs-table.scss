@@ -1,0 +1,72 @@
+.logs-table {
+  height: 100%;
+  overflow: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 12px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 4px 8px;
+    text-align: left;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+  }
+
+  td {
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+
+  tr {
+    height: 21px;
+  }
+
+  // Світла тема
+  background-color: #fff;
+  color: #333;
+
+  th {
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  td {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  tr:hover {
+    background-color: #f0f0f0;
+  }
+
+  // Темна тема
+  &.dark-theme {
+    background-color: #202124;
+    color: #e8eaed;
+
+    th {
+      background-color: #202124;
+      border-bottom: 1px solid #454545;
+    }
+
+    td {
+      border-bottom: 1px solid #454545;
+    }
+
+    tr:hover {
+      background-color: #454545;
+    }
+  }
+
+  // Стан завантаження
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+}

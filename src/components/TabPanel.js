@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { UtilsList } from './UtilsList';
+import { LogsTable } from './LogsTable';
 
 const tabs = [
   { id: 'utils', label: 'Utils' },
@@ -34,7 +35,7 @@ export function TabPanel() {
       case 'utils':
         return <UtilsList />;
       case 'logs':
-        return <div className="tab-content">Logs Content</div>;
+        return <LogsTable />;
       case 'entries':
         return <div className="tab-content">Entries Content</div>;
       default:
