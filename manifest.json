@@ -1,20 +1,20 @@
 {
-  "manifest_version": 3,
-  "name": "WPForms DevTools",
-  "version": "1.0.0",
-  "description": "DevTools extension for WPForms",
-  "devtools_page": "devtools.html",
-  "permissions": [
-    "scripting",
-    "activeTab"
-  ],
-  "host_permissions": ["<all_urls>"],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  },
-  "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
-  }
+	"manifest_version": 3,
+	"name": "WPForms DevTools",
+	"version": "1.0.0",
+	"description": "DevTools extension for WPForms",
+	"devtools_page": "devtools.html",
+	"permissions": [
+		"scripting",
+		"storage"
+	],
+	"host_permissions": ["<all_urls>"],
+	"content_security_policy": {
+		"extension_pages": "script-src 'self'; object-src 'self'"
+	},
+	"icons": {
+		"16": "images/icon16.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	}
 }
