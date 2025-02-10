@@ -7,6 +7,7 @@ export function LogsTable() {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [wpformsAdmin, setWpformsAdmin] = useState(null);
 
+  // Ефект для відстеження теми
   useEffect(() => {
     if (window.matchMedia) {
       const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -19,7 +20,31 @@ export function LogsTable() {
     }
   }, []);
 
+  // Ефект для завантаження логів
   useEffect(() => {
+    let intervalId;
+
+    const getLogDetails = (logId, nonce) => {
+      const script = `
+        (function() {
+          const domain = window.location.hostname;
+          const url = new URL(\`https://\${domain}/wp-admin/admin-ajax.php\`);
+          url.searchParams.append('action', 'wpforms_get_log_record');
+          url.searchParams.append('nonce', '${nonce}');
+          url.searchParams.append('recordId', '${logId}');
+          
+          fetch(url.toString())
+            .then(response => response.json())
+            .then(data => {
+              console.log('Log details:', data);
+            })
+            .catch(error => console.error('Error fetching log details:', error));
+        })();
+      `;
+
+      chrome.devtools.inspectedWindow.eval(script);
+    };
+
     const processResponse = (content) => {
       console.log('Processing response...');
       const parser = new DOMParser();
@@ -27,6 +52,7 @@ export function LogsTable() {
       
       // Отримуємо дані з wpforms_admin
       const wpformsScript = doc.querySelector('script#wpforms-admin-js-extra');
+      let nonce = null;
       
       if (wpformsScript) {
         try {
@@ -35,6 +61,7 @@ export function LogsTable() {
           if (match) {
             const adminData = JSON.parse(match[1]);
             setWpformsAdmin(adminData);
+            nonce = adminData.nonce;
             console.log('WPForms Admin data:', adminData);
           }
         } catch (error) {
@@ -48,13 +75,13 @@ export function LogsTable() {
         // Додаємо обробники кліків на всі логи
         const logLinks = table.querySelectorAll('.js-single-log-target');
         logLinks.forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const logId = link.getAttribute('data-log-id');
-            if (logId) {
-              getLogDetails(logId);
-            }
-          });
+          const logId = link.getAttribute('data-log-id');
+          if (logId && nonce) {
+            link.onclick = (e) => {
+              e.preventDefault();
+              getLogDetails(logId, nonce);
+            };
+          }
         });
 
         console.log('Table found, setting content...');
@@ -63,33 +90,6 @@ export function LogsTable() {
         console.log('Table not found in response');
         setLogsTable('');
       }
-    };
-
-    const getLogDetails = (logId) => {
-      if (!wpformsAdmin || !wpformsAdmin.nonce) {
-        console.error('WPForms admin data not available');
-        return;
-      }
-
-      const script = `
-        (function() {
-          const domain = window.location.hostname;
-          const url = new URL(\`https://\${domain}/wp-admin/admin-ajax.php\`);
-          url.searchParams.append('action', 'wpforms_get_log_record');
-          url.searchParams.append('nonce', '${wpformsAdmin.nonce}');
-          url.searchParams.append('recordId', '${logId}');
-          
-          fetch(url.toString())
-            .then(response => response.json())
-            .then(data => {
-              console.log('Log details:', data);
-              // Тут можна додати обробку отриманих даних
-            })
-            .catch(error => console.error('Error fetching log details:', error));
-        })();
-      `;
-
-      chrome.devtools.inspectedWindow.eval(script);
     };
 
     const fetchLogs = () => {
@@ -130,11 +130,19 @@ export function LogsTable() {
       });
     };
 
+    // Перший запит
     fetchLogs();
 
-    const interval = setInterval(fetchLogs, 30000);
-    return () => clearInterval(interval);
-  }, [wpformsAdmin]);
+    // Встановлюємо інтервал
+    intervalId = setInterval(fetchLogs, 30000);
+
+    // Очищуємо інтервал при розмонтуванні
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, []); // Пустий масив залежностей
 
   if (!logsTable || logsTable.length === 0) {
     return (
