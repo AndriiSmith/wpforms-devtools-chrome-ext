@@ -1,25 +1,25 @@
-// Імпортуємо всі компоненти
+// Import all components.
 @import './TabPanel.scss';
 @import './UtilsList.scss';
 @import './LogsTable.scss';
 
-// Глобальні стилі
+// Global styles.
 :root {
-  // Light theme
-  --background-color: #ffffff;
-  --surface-color: #f8f9fa;
-  --border-color: #e1e4e8;
-  --text-color: #24292e;
-  --tab-hover-color: #f6f8fa;
-  --accent-color: #1a73e8;
+	// Light theme.
+	--background-color: #ffffff;
+	--surface-color: #f8f9fa;
+	--border-color: #e1e4e8;
+	--text-color: #24292e;
+	--tab-hover-color: #f6f8fa;
+	--accent-color: #1a73e8;
 }
 
-// Dark theme
+// Dark theme.
 .dark-theme {
-  --background-color: #1e1e1e;
-  --surface-color: #252526;
-  --border-color: #454545;
-  --text-color: #d4d4d4;
-  --tab-hover-color: #2a2d2e;
-  --accent-color: #8ab4f8;
+	--background-color: #1e1e1e;
+	--surface-color: #252526;
+	--border-color: #454545;
+	--text-color: #d4d4d4;
+	--tab-hover-color: #2a2d2e;
+	--accent-color: #8ab4f8;
 }

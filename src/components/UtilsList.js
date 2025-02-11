@@ -5,7 +5,7 @@ export function UtilsList() {
 	const [utils, setUtils] = useState([]);
 
 	useEffect(() => {
-		// Рекурсивна функція для обробки елементів меню
+		// Recursive function to process menu items.
 		const processMenuItems = () => {
 			const script = `
 				function getMenuItems(element) {
@@ -38,18 +38,18 @@ export function UtilsList() {
 			});
 		};
 
-		// Отримуємо дані при першому завантаженні
+		// Get data on initial load.
 		processMenuItems();
 
-		// Підписуємось на оновлення сторінки
+		// Subscribe to page updates.
 		const navigationListener = () => {
-			setTimeout(processMenuItems, 500); // Даємо час на завантаження DOM
+			setTimeout(processMenuItems, 500); // Give time for DOM to load.
 		};
 
-		// Підписуємось на події навігації та оновлення
+		// Subscribe to navigation and update events.
 		chrome.devtools.network.onNavigated.addListener(navigationListener);
 
-		// Підписуємось на події ресурсів (включаючи перезавантаження)
+		// Subscribe to resource events (including reloads).
 		const resourceListener = (resource) => {
 			if (resource.type === 'document' && resource.url === chrome.devtools.inspectedWindow.tabId) {
 				setTimeout(processMenuItems, 500);
@@ -57,7 +57,7 @@ export function UtilsList() {
 		};
 		chrome.devtools.network.onRequestFinished.addListener(resourceListener);
 
-		// Додаємо обробник для події DOMContentLoaded
+		// Add handler for DOMContentLoaded event.
 		const domLoadedScript = `
 			const observer = new MutationObserver((mutations) => {
 				for (const mutation of mutations) {
@@ -89,8 +89,9 @@ export function UtilsList() {
 		};
 	}, []);
 
+	// Render loading state if no utils.
 	if (utils.length === 0) {
-		return <div className="utils-list utils-list--empty">No utilities found</div>;
+		return <div className="utils-list utils-list--empty">No utilities found.</div>;
 	}
 
 	console.log('Utils:', utils);

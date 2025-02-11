@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 
-// Компонент іконки чекбоксу
+// Checkbox icon component.
 function CheckboxIcon({ checked }) {
 	if (checked === null) return null;
 	
@@ -25,7 +25,7 @@ export function MenuItem({ item }) {
 			setIsOpen(!isOpen);
 		} else if (item.id) {
 			e.preventDefault();
-			// Виконуємо клік на оригінальному елементі
+			// Click on the original element.
 			chrome.devtools.inspectedWindow.eval(
 				`document.querySelector('#${item.id} a').click()`
 			);

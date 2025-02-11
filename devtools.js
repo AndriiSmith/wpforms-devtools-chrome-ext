@@ -1,16 +1,16 @@
-// Функція для перевірки наявності елемента
+// Function to check for WPForms element.
 function checkForWPFormsElement() {
   chrome.devtools.inspectedWindow.eval(
     'document.querySelector("#wp-admin-bar-wpf-utils") !== null',
     (result, isException) => {
       if (!isException && result) {
-        // Елемент знайдено, створюємо панель
+        // Element found, create panel.
         chrome.devtools.panels.create(
           "WPForms",
           null,
           "panel.html",
           (panel) => {
-            console.log("WPForms panel created");
+            console.log("WPForms panel created.");
           }
         );
       }
@@ -18,10 +18,10 @@ function checkForWPFormsElement() {
   );
 }
 
-// Перевіряємо при першому завантаженні
+// Check on initial load.
 checkForWPFormsElement();
 
-// Перевіряємо при оновленні сторінки
+// Check on page reload.
 chrome.devtools.network.onNavigated.addListener(() => {
   checkForWPFormsElement();
 });

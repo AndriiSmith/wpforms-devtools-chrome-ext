@@ -14,18 +14,18 @@ export function TabPanel() {
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
 
 	useEffect(() => {
-		// Перевіряємо чи підтримується prefers-color-scheme
+		// Check if prefers-color-scheme is supported.
 		if (window.matchMedia) {
 			const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			
-			// Початкова перевірка теми
+			// Initial theme check.
 			setIsDarkTheme(darkThemeQuery.matches);
 
-			// Підписка на зміни теми
+			// Subscribe to theme changes.
 			const themeListener = (e) => setIsDarkTheme(e.matches);
 			darkThemeQuery.addListener(themeListener);
 			
-			// Відписка при розмонтуванні
+			// Cleanup on unmount.
 			return () => darkThemeQuery.removeListener(themeListener);
 		}
 	}, []);
@@ -37,7 +37,7 @@ export function TabPanel() {
 			case 'logs':
 				return <LogsTable />;
 			case 'entries':
-				return <div className="tab-content">Entries Content</div>;
+				return <div className="tab-content">Entries Content.</div>;
 			default:
 				return null;
 		}

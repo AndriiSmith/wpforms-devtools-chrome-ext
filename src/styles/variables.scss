@@ -1,6 +1,6 @@
-// Chrome DevTools theme variables
+// Chrome DevTools theme variables.
 :root {
-  // Light theme
+  // Light theme.
   --background-light: #f3f3f3;
   --surface-light: #ffffff;
   --text-light: #202124;
@@ -10,7 +10,7 @@
   --tab-selected-light: #ffffff;
   --accent-light: #1a73e8;
   
-  // Dark theme
+  // Dark theme.
   --background-dark: #202124;
   --surface-dark: #292a2d;
   --text-dark: #ffffff;
@@ -21,7 +21,7 @@
   --accent-dark: #8ab4f8;
 }
 
-// Theme-aware variables
+// Theme-aware variables.
 [data-theme="light"] {
   --background: var(--background-light); 
   --surface: var(--surface-light);
