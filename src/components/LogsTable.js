@@ -71,30 +71,131 @@ export function LogsTable() {
             if (!isException && url) {
                 console.log('Logs URL:', url);
                 
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', url, true);
-                
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        console.log('Got response, length:', xhr.responseText.length);
-                        processResponse(xhr.responseText);
-                    } else {
-                        console.error('Failed to fetch logs:', xhr.status);
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(responseText => {
+                        console.log('Got response, length:', responseText.length);
+                        showRecordDetail(responseText);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching logs:', error);
                         setLogsTable('');
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    console.error('Error fetching logs.');
-                    setLogsTable('');
-                };
-                
-                xhr.send();
+                    });
             } else {
                 console.error('Failed to get logs URL:', isException);
                 setLogsTable('');
             }
         });
+    };
+
+    // Show record details in popup panel.
+    const showRecordDetail = (responseText) => {
+        try {
+            const data = JSON.parse(responseText);
+            
+            if (!data || !data.data) {
+                console.error('Invalid response format:', responseText);
+                return;
+            }
+
+            // Create popup container
+            const popup = document.createElement('div');
+            popup.className = 'wpforms-devtools-popup';
+            popup.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--surface-color);
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                max-width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+
+            // Create close button
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '×';
+            closeButton.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                border: none;
+                background: none;
+                font-size: 16px;
+                cursor: pointer;
+            `;
+            closeButton.onclick = () => popup.remove();
+
+            // Create content container
+            const content = document.createElement('div');
+            content.style.cssText = `
+                margin-top: 10px;
+                font-family: monospace;
+                font-size: 12px;
+                color: var(--text-color);
+            `;
+
+            // Add title
+            const title = document.createElement('h3');
+            title.textContent = 'Log Record Details';
+            title.style.marginTop = '0';
+
+            // Create table for data
+            const table = document.createElement('table');
+            table.style.cssText = `
+                width: 100%;
+                border-collapse: collapse;
+            `;
+
+            // Add data rows
+            Object.entries(data.data).forEach(([key, value]) => {
+                const row = table.insertRow();
+                
+                const keyCell = row.insertCell();
+                keyCell.style.cssText = `
+                    padding: 8px;
+                    border-bottom: 1px solid var(--wpforms-border-light);
+                    font-weight: bold;
+                `;
+                keyCell.textContent = key;
+                
+                const valueCell = row.insertCell();
+                valueCell.style.cssText = `
+                    padding: 8px;
+                    border-bottom: 1px solid var(--wpforms-border-light);
+                    word-break: break-all;
+                `;
+
+                const content = typeof value === 'object' ? JSON.stringify(value, null, 2) : value;
+
+                if ( key === 'message' ) {
+                    valueCell.innerHTML = content;
+                } else {
+                    valueCell.textContent = content;
+                }
+            });
+
+            // Assemble popup
+            content.appendChild(table);
+            popup.appendChild(closeButton);
+            popup.appendChild(title);
+            popup.appendChild(content);
+
+            // Add to document
+            document.body.appendChild(popup);
+
+        } catch (error) {
+            console.error('Error processing response:', error);
+        }
     };
 
     // Listen for log details messages.
