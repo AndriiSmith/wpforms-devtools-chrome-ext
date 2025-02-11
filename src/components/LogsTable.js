@@ -56,24 +56,45 @@ export function LogsTable() {
         const script = `
             (function() {
                 const domain = window.location.hostname;
-                const url = new URL(\`https://\${domain}/wp-admin/admin-ajax.php\`);
+                const protocol = window.location.protocol;
+                const url = new URL(\`\${protocol}//\${domain}/wp-admin/admin-ajax.php\`);
+                
                 url.searchParams.append('action', 'wpforms_get_log_record');
                 url.searchParams.append('nonce', '${wpformsAdmin.nonce}');
                 url.searchParams.append('recordId', '${logId}');
                 
-                console.log('Fetching from URL:', url.toString());
-                
-                fetch(url.toString())
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Got log details, sending message:', data);
-                        window.postMessage({ type: 'WPF_LOG_DETAILS', data }, '*');
-                    })
-                    .catch(error => console.error('Error fetching log details:', error));
+                return url.toString();
             })();
         `;
 
-        chrome.devtools.inspectedWindow.eval(script);
+        chrome.devtools.inspectedWindow.eval(script, (url, isException) => {
+            if (!isException && url) {
+                console.log('Logs URL:', url);
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('Got response, length:', xhr.responseText.length);
+                        processResponse(xhr.responseText);
+                    } else {
+                        console.error('Failed to fetch logs:', xhr.status);
+                        setLogsTable('');
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.error('Error fetching logs.');
+                    setLogsTable('');
+                };
+                
+                xhr.send();
+            } else {
+                console.error('Failed to get logs URL:', isException);
+                setLogsTable('');
+            }
+        });
     };
 
     // Listen for log details messages.
@@ -136,7 +157,8 @@ export function LogsTable() {
             const script = `
                 (function() {
                     const domain = window.location.hostname;
-                    return \`https://\${domain}/wp-admin/admin.php?page=wpforms-tools&view=logs\`;
+                    const protocol = window.location.protocol;
+                    return \`\${protocol}//\${domain}/wp-admin/admin.php?page=wpforms-tools&view=logs\`;
                 })();
             `;
 
