@@ -1,25 +1,25 @@
-// Variables
-:root {
-	--background-color: #f3f3f3;
-	--surface-color: #ffffff;
-	--text-color: #202124;
-	--border-color: #e0e0e0;
-	--tab-hover-color: #eaeaea;
-	--tab-selected-color: #ffffff;
-	--accent-color: #1a73e8;
-
-	&.dark-theme {
-		--background-color: #202124;
-		--surface-color: #292a2d;
-		--text-color: #ffffff;
-		--border-color: #3c4043;
-		--tab-hover-color: #35363a;
-		--tab-selected-color: #292a2d;
-		--accent-color: #8ab4f8;
-	}
-}
-
-// Import component styles
+// Імпортуємо всі компоненти
 @import './TabPanel.scss';
 @import './UtilsList.scss';
 @import './LogsTable.scss';
+
+// Глобальні стилі
+:root {
+  // Light theme
+  --background-color: #ffffff;
+  --surface-color: #f8f9fa;
+  --border-color: #e1e4e8;
+  --text-color: #24292e;
+  --tab-hover-color: #f6f8fa;
+  --accent-color: #1a73e8;
+}
+
+// Dark theme
+.dark-theme {
+  --background-color: #1e1e1e;
+  --surface-color: #252526;
+  --border-color: #454545;
+  --text-color: #d4d4d4;
+  --tab-hover-color: #2a2d2e;
+  --accent-color: #8ab4f8;
+}

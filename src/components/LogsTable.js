@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import '../styles/index.scss';
 
 export function LogsTable() {
   const [logsTable, setLogsTable] = useState('');
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [wpformsAdmin, setWpformsAdmin] = useState(null);
+  const [logDetails, setLogDetails] = useState(null);
+  const tableRef = useRef(null);
 
   // Ефект для відстеження теми
   useEffect(() => {
@@ -20,30 +21,83 @@ export function LogsTable() {
     }
   }, []);
 
+  // Обробник кліку для всієї таблиці
+  const handleTableClick = (e) => {
+    console.log('Click event:', e.target);
+    
+    // Перевіряємо чи клікнули на елемент з потрібним класом
+    const target = e.target.closest('.js-single-log-target');
+    console.log('Found target:', target);
+    
+    if (!target) {
+      console.log('No target element found');
+      return;
+    }
+    
+    if (!wpformsAdmin || !wpformsAdmin.nonce) {
+      console.log('No wpformsAdmin data:', { wpformsAdmin });
+      return;
+    }
+
+    e.preventDefault();
+    const logId = target.getAttribute('data-log-id');
+    console.log('Log ID:', logId);
+    
+    if (!logId) {
+      console.log('No log ID found');
+      return;
+    }
+
+    console.log('Sending request for log details:', {
+      logId,
+      nonce: wpformsAdmin.nonce
+    });
+
+    const script = `
+      (function() {
+        const domain = window.location.hostname;
+        const url = new URL(\`https://\${domain}/wp-admin/admin-ajax.php\`);
+        url.searchParams.append('action', 'wpforms_get_log_record');
+        url.searchParams.append('nonce', '${wpformsAdmin.nonce}');
+        url.searchParams.append('recordId', '${logId}');
+        
+        console.log('Fetching from URL:', url.toString());
+        
+        fetch(url.toString())
+          .then(response => response.json())
+          .then(data => {
+            console.log('Got log details, sending message:', data);
+            window.postMessage({ type: 'WPF_LOG_DETAILS', data }, '*');
+          })
+          .catch(error => console.error('Error fetching log details:', error));
+      })();
+    `;
+
+    chrome.devtools.inspectedWindow.eval(script);
+  };
+
+  // Ефект для прослуховування повідомлень з деталями логу
+  useEffect(() => {
+    const handleMessage = (event) => {
+      console.log('Got message:', event.data);
+      if (event.data.type === 'WPF_LOG_DETAILS') {
+        console.log('Setting log details:', event.data.data);
+        setLogDetails(event.data.data);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // Ефект для відстеження змін logDetails
+  useEffect(() => {
+    console.log('Log details updated:', logDetails);
+  }, [logDetails]);
+
   // Ефект для завантаження логів
   useEffect(() => {
     let intervalId;
-
-    const getLogDetails = (logId, nonce) => {
-      const script = `
-        (function() {
-          const domain = window.location.hostname;
-          const url = new URL(\`https://\${domain}/wp-admin/admin-ajax.php\`);
-          url.searchParams.append('action', 'wpforms_get_log_record');
-          url.searchParams.append('nonce', '${nonce}');
-          url.searchParams.append('recordId', '${logId}');
-          
-          fetch(url.toString())
-            .then(response => response.json())
-            .then(data => {
-              console.log('Log details:', data);
-            })
-            .catch(error => console.error('Error fetching log details:', error));
-        })();
-      `;
-
-      chrome.devtools.inspectedWindow.eval(script);
-    };
 
     const processResponse = (content) => {
       console.log('Processing response...');
@@ -52,7 +106,6 @@ export function LogsTable() {
       
       // Отримуємо дані з wpforms_admin
       const wpformsScript = doc.querySelector('script#wpforms-admin-js-extra');
-      let nonce = null;
       
       if (wpformsScript) {
         try {
@@ -61,7 +114,6 @@ export function LogsTable() {
           if (match) {
             const adminData = JSON.parse(match[1]);
             setWpformsAdmin(adminData);
-            nonce = adminData.nonce;
             console.log('WPForms Admin data:', adminData);
           }
         } catch (error) {
@@ -72,18 +124,6 @@ export function LogsTable() {
       const table = doc.querySelector('.wp-list-table');
       
       if (table) {
-        // Додаємо обробники кліків на всі логи
-        const logLinks = table.querySelectorAll('.js-single-log-target');
-        logLinks.forEach(link => {
-          const logId = link.getAttribute('data-log-id');
-          if (logId && nonce) {
-            link.onclick = (e) => {
-              e.preventDefault();
-              getLogDetails(logId, nonce);
-            };
-          }
-        });
-
         console.log('Table found, setting content...');
         setLogsTable(table.outerHTML);
       } else {
@@ -153,8 +193,25 @@ export function LogsTable() {
   }
 
   return (
-    <div className={classNames('logs-table', { 'dark-theme': isDarkTheme })}>
-      <div dangerouslySetInnerHTML={{ __html: logsTable }} />
+    <div 
+      ref={tableRef}
+      className={classNames('logs-table', { 'dark-theme': isDarkTheme })}
+      onClick={handleTableClick}
+    >
+      <div className="logs-table__content" dangerouslySetInnerHTML={{ __html: logsTable }} />
+      <div 
+        className={classNames('logs-table__details', { 
+          'logs-table__details--visible': logDetails 
+        })}
+        style={{ display: logDetails ? 'block' : 'none' }}
+      >
+        {logDetails && (
+          <>
+            <h3>Log Details</h3>
+            <pre>{JSON.stringify(logDetails.data, null, 2)}</pre>
+          </>
+        )}
+      </div>
     </div>
   );
 }
