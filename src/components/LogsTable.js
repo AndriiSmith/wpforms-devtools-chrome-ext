@@ -106,77 +106,35 @@ export function LogsTable() {
             // Create popup container
             const popup = document.createElement('div');
             popup.className = 'wpforms-devtools-popup';
-            popup.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: var(--surface-color);
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                max-width: 600px;
-                max-height: 80vh;
-                overflow-y: auto;
-            `;
 
             // Create close button
             const closeButton = document.createElement('button');
             closeButton.textContent = '×';
-            closeButton.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                border: none;
-                background: none;
-                font-size: 16px;
-                cursor: pointer;
-            `;
+            closeButton.className = 'wpforms-devtools-popup__close';
             closeButton.onclick = () => popup.remove();
 
             // Create content container
             const content = document.createElement('div');
-            content.style.cssText = `
-                margin-top: 10px;
-                font-family: monospace;
-                font-size: 12px;
-                color: var(--text-color);
-            `;
+            content.className = 'wpforms-devtools-popup__content';
 
             // Add title
             const title = document.createElement('h3');
             title.textContent = 'Log Record Details';
-            title.style.marginTop = '0';
+            title.className = 'wpforms-devtools-popup__title';
 
             // Create table for data
             const table = document.createElement('table');
-            table.style.cssText = `
-                width: 100%;
-                border-collapse: collapse;
-            `;
+            table.className = 'wpforms-devtools-popup__table';
 
             // Add data rows
             Object.entries(data.data).forEach(([key, value]) => {
                 const row = table.insertRow();
-                
                 const keyCell = row.insertCell();
-                keyCell.style.cssText = `
-                    padding: 8px;
-                    border-bottom: 1px solid var(--wpforms-border-light);
-                    font-weight: bold;
-                `;
-                keyCell.textContent = key;
-                
                 const valueCell = row.insertCell();
-                valueCell.style.cssText = `
-                    padding: 8px;
-                    border-bottom: 1px solid var(--wpforms-border-light);
-                    word-break: break-all;
-                `;
-
                 const content = typeof value === 'object' ? JSON.stringify(value, null, 2) : value;
 
+                keyCell.textContent = key;
+                
                 if ( key === 'message' ) {
                     valueCell.innerHTML = content;
                 } else {
