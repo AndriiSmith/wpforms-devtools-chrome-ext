@@ -257,11 +257,22 @@ export function LogsTable() {
         // Set up interval.
         intervalId = setInterval(fetchLogs, 30000);
 
-        // Clean up interval on unmount.
+        // Listen for page navigation events.
+        const navigationListener = () => {
+            console.log('Page navigated, fetching fresh logs...');
+            setTimeout(() => {
+                fetchLogs();
+            }, 250);
+        };
+
+        chrome.devtools.network.onNavigated.addListener(navigationListener);
+
+        // Clean up interval and listener on unmount.
         return () => {
             if (intervalId) {
                 clearInterval(intervalId);
             }
+            chrome.devtools.network.onNavigated.removeListener(navigationListener);
         };
     }, []); // Empty dependency array.
 
