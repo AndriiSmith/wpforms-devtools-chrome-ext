@@ -107,20 +107,24 @@ export function LogsTable() {
             const popup = document.createElement('div');
             popup.className = 'wpforms-devtools-popup';
 
+			// Create content container
+            const header = document.createElement('div');
+            header.className = 'wpforms-devtools-popup__header';
+
             // Create close button
             const closeButton = document.createElement('button');
             closeButton.textContent = '×';
             closeButton.className = 'wpforms-devtools-popup__close';
             closeButton.onclick = () => popup.remove();
 
-            // Create content container
-            const content = document.createElement('div');
-            content.className = 'wpforms-devtools-popup__content';
-
             // Add title
             const title = document.createElement('h3');
             title.textContent = 'Log Record Details';
             title.className = 'wpforms-devtools-popup__title';
+
+            // Create content container
+            const content = document.createElement('div');
+            content.className = 'wpforms-devtools-popup__content';
 
             // Create table for data
             const table = document.createElement('table');
@@ -143,9 +147,10 @@ export function LogsTable() {
             });
 
             // Assemble popup
+			header.appendChild(closeButton);
+			header.appendChild(title);
             content.appendChild(table);
-            popup.appendChild(closeButton);
-            popup.appendChild(title);
+            popup.appendChild(header);
             popup.appendChild(content);
 
             // Add to document
@@ -290,19 +295,7 @@ export function LogsTable() {
             className={classNames('logs-table', { 'dark-theme': isDarkTheme })}
             onClick={handleTableClick}
         >
-            <div className="logs-table__content" dangerouslySetInnerHTML={{ __html: logsTable }} />
-            {logDetails && (
-                <div className="wpforms-devtools-popup">
-                    <div className="wpforms-devtools-popup__header">
-                        <h3 className="wpforms-devtools-popup__title">Log Details</h3>
-                        <button className="wpforms-devtools-popup__close" 
-                            onClick={() => setLogDetails(null)}>×</button>
-                    </div>
-                    <div className="wpforms-devtools-popup__content">
-                        <pre>{JSON.stringify(logDetails.data, null, 2)}</pre>
-                    </div>
-                </div>
-            )}
+            <div className="logs-table__content" dangerouslySetInnerHTML={{ __html: logsTable }} />            
         </div>
     );
 }

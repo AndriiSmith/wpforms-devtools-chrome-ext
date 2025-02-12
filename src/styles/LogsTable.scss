@@ -129,21 +129,21 @@
 
 .wpforms-devtools-popup {
 	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	top: 33px;
+	left: 400px;
 	background: var(--surface-color);
 	border-radius: 8px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	z-index: 1000;
-	max-width: 600px;
-	max-height: 80vh;
+	width: calc( 100vw - 400px );
+	max-width: calc( 100vw - 400px );
+	max-height: calc( 100vh - 33px );
 	display: flex;
 	flex-direction: column;
 	padding: 0;
 
 	&__header {
-		padding: 20px 20px 10px;
+		padding: 10px 10px 10px 20px;
 		position: relative;
 		flex-shrink: 0;
 	}
@@ -163,8 +163,7 @@
 	}
 
 	&__content {
-		margin-top: 10px;
-		padding: 0 20px 20px;
+		padding: 0;
 		font-family: monospace;
 		font-size: 12px;
 		overflow-y: auto;
@@ -184,6 +183,7 @@
 				font-weight: bold;
 				min-width: 80px;
 				vertical-align: top;
+				padding-left: 20px;
 			}
 		}
 	}
