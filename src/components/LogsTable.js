@@ -291,19 +291,18 @@ export function LogsTable() {
             onClick={handleTableClick}
         >
             <div className="logs-table__content" dangerouslySetInnerHTML={{ __html: logsTable }} />
-            <div 
-                className={classNames('logs-table__details', { 
-                    'logs-table__details--visible': logDetails 
-                })}
-                style={{ display: logDetails ? 'block' : 'none' }}
-            >
-                {logDetails && (
-                    <>
-                        <h3>Log Details</h3>
+            {logDetails && (
+                <div className="wpforms-devtools-popup">
+                    <div className="wpforms-devtools-popup__header">
+                        <h3 className="wpforms-devtools-popup__title">Log Details</h3>
+                        <button className="wpforms-devtools-popup__close" 
+                            onClick={() => setLogDetails(null)}>×</button>
+                    </div>
+                    <div className="wpforms-devtools-popup__content">
                         <pre>{JSON.stringify(logDetails.data, null, 2)}</pre>
-                    </>
-                )}
-            </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
