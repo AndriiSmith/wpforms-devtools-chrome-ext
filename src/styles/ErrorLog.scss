@@ -1,0 +1,32 @@
+.error-log__content {
+    height: 100%;
+    overflow-y: auto;
+    font-family: 'Droid Sans Mono Dotted', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 10px;
+    background-color: var(--surface-color);
+	color: var(--text-color);
+	box-sizing: border-box;
+
+    .log-line {
+        margin: 0;
+        padding: 2px 0;
+		white-space: pre-wrap;
+    }
+
+    .new-line {
+        animation: fadeIn 0.5s ease-in;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    to {
+        opacity: 1;
+        background-color: transparent;
+    }
+}
