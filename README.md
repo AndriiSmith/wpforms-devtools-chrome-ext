@@ -21,8 +21,8 @@ A browser extension that provides advanced development tools and utilities for W
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/DevTools.ext.git
-cd DevTools.ext
+git clone https://github.com/AndriiSmith/wpforms-devtools-chrome-ext.git
+cd wpforms-devtools-chrome-ext
 ```
 
 2. Install dependencies:
