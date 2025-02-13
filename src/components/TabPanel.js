@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { UtilsList } from './UtilsList';
 import { LogsTable } from './LogsTable';
+import { ErrorLog } from './ErrorLog';
 
 const tabs = [
 	{ id: 'utils', label: 'Utils' },
 	{ id: 'logs', label: 'Logs' },
-	{ id: 'entries', label: 'Entries' }
+	{ id: 'entries', label: 'Entries' },
+	{ id: 'errorLogs', label: 'Error log' }
 ];
 
 export function TabPanel() {
@@ -38,6 +40,8 @@ export function TabPanel() {
 				return <LogsTable />;
 			case 'entries':
 				return <div className="tab-content">Entries Content.</div>;
+			case 'errorLogs':
+				return <ErrorLog />;
 			default:
 				return null;
 		}
