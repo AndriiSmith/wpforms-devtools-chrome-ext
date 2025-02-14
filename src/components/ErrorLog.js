@@ -112,7 +112,7 @@ export function ErrorLog({ isActive }) {
         <div className="server-instructions">
           <p>To view error log, run the following command in terminal:</p>
           <pre className="command-line">
-            cd c:\\www\\DevTools.ext && node src/server/logWatcher.js
+            cd c:/www/DevTools.ext && node src/server/logWatcher.js
           </pre>
         </div>
       </div>
