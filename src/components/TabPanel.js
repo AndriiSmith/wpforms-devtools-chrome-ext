@@ -39,7 +39,7 @@ export function TabPanel() {
 			case 'logs':
 				return <LogsTable />;
 			case 'errorLogs':
-				return <ErrorLog />;
+				return <ErrorLog isActive={activeTab === 'errorLogs'} />;
 			// case 'entries':
 			// 		return <div className="tab-content">Entries Content.</div>;
 			default:
