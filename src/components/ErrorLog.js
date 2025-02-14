@@ -2,9 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import '../styles/ErrorLog.scss';
 
-// Maximum number of lines to display.
-const MAX_LINES = 20;
-
 // WebSocket server port.
 const WS_PORT = 8077;
 
@@ -69,10 +66,7 @@ export function ErrorLog({ isActive }) {
     // Handle incoming log messages.
     ws.current.onmessage = (event) => {
       const newLines = JSON.parse(event.data);
-      setLogLines((prevLines) => {
-        const updatedLines = [...prevLines, ...newLines];
-        return updatedLines.slice(-MAX_LINES);
-      });
+      setLogLines((prevLines) => [...prevLines, ...newLines]);
 
       if (isActive) {
         scrollToBottom();
