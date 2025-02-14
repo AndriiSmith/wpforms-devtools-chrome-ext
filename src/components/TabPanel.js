@@ -7,7 +7,7 @@ import { ErrorLog } from './ErrorLog';
 const tabs = [
 	{ id: 'utils', label: 'Utils' },
 	{ id: 'logs', label: 'Logs' },
-	{ id: 'entries', label: 'Entries' },
+	//{ id: 'entries', label: 'Entries' },
 	{ id: 'errorLogs', label: 'Error log' }
 ];
 
@@ -38,10 +38,10 @@ export function TabPanel() {
 				return <UtilsList />;
 			case 'logs':
 				return <LogsTable />;
-			case 'entries':
-				return <div className="tab-content">Entries Content.</div>;
 			case 'errorLogs':
 				return <ErrorLog />;
+			// case 'entries':
+			// 		return <div className="tab-content">Entries Content.</div>;
 			default:
 				return null;
 		}
