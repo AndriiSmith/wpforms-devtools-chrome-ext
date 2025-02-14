@@ -1,11 +1,26 @@
 const WebSocket = require('ws');
+const http = require('http');
 const fs = require('fs');
 const { Tail } = require('tail');
 
 const ERROR_LOG_PATH = 'C:\\bin\\laragon\\tmp\\php_errors.log';
 const MAX_INITIAL_LINES = 20;
+const PORT = 8077;
 
-const wss = new WebSocket.Server({ port: 8077 });
+// Створюємо HTTP сервер
+const server = http.createServer((req, res) => {
+    if (req.url === '/health') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.writeHead(200);
+        res.end('OK');
+        return;
+    }
+    res.writeHead(404);
+    res.end();
+});
+
+// Створюємо WebSocket сервер, прикріплений до HTTP сервера
+const wss = new WebSocket.Server({ server });
 
 // Функція для читання останніх N рядків з файлу
 function getLastNLines(filePath, n) {
@@ -41,4 +56,9 @@ wss.on('connection', (ws) => {
         console.log('Client disconnected');
         tail.unwatch();
     });
+});
+
+// Запускаємо сервер
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
