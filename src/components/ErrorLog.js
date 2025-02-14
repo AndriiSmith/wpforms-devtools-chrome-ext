@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import '../styles/ErrorLog.scss';
 
-const ERROR_LOG_PATH = 'C:\\bin\\laragon\\tmp\\php_errors.log';
+// Maximum number of lines to display.
 const MAX_LINES = 20;
+
+// WebSocket server port.
 const WS_PORT = 8077;
 
 export function ErrorLog({ isActive }) {
@@ -14,6 +16,7 @@ export function ErrorLog({ isActive }) {
   const checkInterval = useRef(null);
   const scrollTimeout = useRef(null);
 
+  // Scroll to the bottom of the log content with a delay to ensure content is rendered.
   const scrollToBottom = () => {
     // Clear any existing scroll timeout.
     if (scrollTimeout.current) {
@@ -28,6 +31,7 @@ export function ErrorLog({ isActive }) {
     }, 100);
   };
 
+  // Check if the WebSocket server is running by making a health check request.
   const checkServer = async () => {
     try {
       const response = await fetch(`http://localhost:${WS_PORT}/health`);
@@ -39,11 +43,13 @@ export function ErrorLog({ isActive }) {
     }
   };
 
+  // Establish WebSocket connection and set up event handlers.
   const connectWebSocket = () => {
     if (ws.current?.readyState === WebSocket.OPEN) return;
 
     ws.current = new WebSocket(`ws://localhost:${WS_PORT}`);
 
+    // Handle successful connection.
     ws.current.onopen = () => {
       setIsConnected(true);
       if (checkInterval.current) {
@@ -52,6 +58,7 @@ export function ErrorLog({ isActive }) {
       }
     };
 
+    // Handle connection loss and start checking for server availability.
     ws.current.onclose = () => {
       setIsConnected(false);
       if (!checkInterval.current) {
@@ -59,6 +66,7 @@ export function ErrorLog({ isActive }) {
       }
     };
 
+    // Handle incoming log messages.
     ws.current.onmessage = (event) => {
       const newLines = JSON.parse(event.data);
       setLogLines((prevLines) => {
@@ -72,13 +80,14 @@ export function ErrorLog({ isActive }) {
     };
   };
 
-  // Scroll to bottom when tab becomes active.
+  // Scroll to bottom when tab becomes active and there are log lines.
   useEffect(() => {
     if (isActive && logLines.length > 0) {
       scrollToBottom();
     }
   }, [isActive, logLines]);
 
+  // Initialize server check and cleanup on unmount.
   useEffect(() => {
     checkServer();
     checkInterval.current = setInterval(checkServer, 2000);
@@ -96,6 +105,7 @@ export function ErrorLog({ isActive }) {
     };
   }, []);
 
+  // Show instructions if not connected to the server.
   if (!isConnected) {
     return (
       <div className="error-log__content">
@@ -109,6 +119,7 @@ export function ErrorLog({ isActive }) {
     );
   }
 
+  // Render log content.
   return (
     <div className="error-log__content" ref={contentRef}>
       {logLines.map((line, index) => (
