@@ -3,12 +3,13 @@ import classNames from 'classnames';
 import { UtilsList } from './UtilsList';
 import { LogsTable } from './LogsTable';
 import { ErrorLog } from './ErrorLog';
+import { EntriesTable } from './EntriesTable';
 
 const tabs = [
 	{ id: 'utils', label: 'Utils' },
 	{ id: 'logs', label: 'Logs' },
-	//{ id: 'entries', label: 'Entries' },
-	{ id: 'errorLogs', label: 'Error log' }
+	{ id: 'errorLogs', label: 'Error log' },
+	{ id: 'entries', label: 'Entries' },
 ];
 
 export function TabPanel() {
@@ -40,8 +41,8 @@ export function TabPanel() {
 				return <LogsTable />;
 			case 'errorLogs':
 				return <ErrorLog isActive={activeTab === 'errorLogs'} />;
-			// case 'entries':
-			// 		return <div className="tab-content">Entries Content.</div>;
+			case 'entries':
+				return <EntriesTable />;
 			default:
 				return null;
 		}
