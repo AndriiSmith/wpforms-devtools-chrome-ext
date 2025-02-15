@@ -98,6 +98,32 @@ export function EntriesTable() {
 							table.querySelectorAll('.check-column, .column-indicators, .column-primary .toggle-row').forEach(el => {
 								el.remove();
 							});
+
+							// Add ID column header.
+							const headerRow = table.querySelector('thead tr');
+							const idHeader = doc.createElement('th');
+							idHeader.textContent = 'ID';
+							idHeader.className = 'column-id';
+							headerRow.insertBefore(idHeader, headerRow.firstChild);
+
+							// Add ID column cells.
+							table.querySelectorAll('tbody tr').forEach(row => {
+								const viewLink = row.querySelector('a.view');
+								let entryId = '';
+								
+								if (viewLink) {
+									const href = viewLink.getAttribute('href');
+									const match = href.match(/[?&]entry_id=(\d+)/);
+									if (match) {
+										entryId = match[1];
+									}
+								}
+
+								const idCell = doc.createElement('td');
+								idCell.textContent = entryId;
+								idCell.className = 'column-id';
+								row.insertBefore(idCell, row.firstChild);
+							});
 							
 							setEntriesTable(table.outerHTML);
 						} else {

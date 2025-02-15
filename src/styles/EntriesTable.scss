@@ -10,6 +10,11 @@
 		width: 100%;
 		border-collapse: collapse;
 
+		.column-id {
+			width: 60px;
+			text-align: right !important;
+		}
+
 		tr {
 			background: var(--background-color);
 
