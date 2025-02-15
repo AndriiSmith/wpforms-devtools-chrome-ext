@@ -2,6 +2,8 @@
 @import './TabPanel.scss';
 @import './UtilsList.scss';
 @import './LogsTable.scss';
+@import './ErrorLog.scss';
+@import './EntriesTable.scss';
 
 // Global styles.
 :root {
@@ -9,7 +11,7 @@
 	--background-color: #ffffff;
 	--surface-color: #f8f9fa;
 	--border-color: #e1e4e8;
-	--text-color: #24292e;
+	--text-color: #24292e; 
 	--tab-hover-color: #f6f8fa;
 	--accent-color: #1a73e8;
 }

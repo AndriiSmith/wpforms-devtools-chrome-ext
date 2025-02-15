@@ -2,7 +2,7 @@
 	padding: 15px;
 	
 	&.dark-theme {
-		.wpforms-table-list {
+		.wp-list-table {
 			background-color: #1e1e1e;
 			color: #ffffff;
 			
@@ -33,7 +33,7 @@
 		overflow-x: auto;
 	}
 	
-	.wpforms-table-list {
+	.wp-list-table {
 		width: 100%;
 		border-collapse: collapse;
 		margin-top: 10px;
