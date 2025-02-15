@@ -10,7 +10,8 @@
 		border-collapse: collapse;
 
 		.column-id {
-			width: 60px;
+			width: 30px;
+            min-width: 30px;
 			text-align: right !important;
 		}
 
@@ -27,6 +28,9 @@
 			padding: 4px 8px;
 			text-align: left;
 			border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
 		}
 		
 		th {
