@@ -15,6 +15,7 @@ const tabs = [
 export function TabPanel() {
 	const [activeTab, setActiveTab] = useState('utils');
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
+	const [formId, setFormId] = useState(null);
 
 	useEffect(() => {
 		// Check if prefers-color-scheme is supported.
@@ -33,6 +34,47 @@ export function TabPanel() {
 		}
 	}, []);
 
+	// Get form ID from various possible sources.
+	const getFormId = () => {
+		const script = `
+			(function() {
+				// Try to get form_id from URL parameters.
+				const urlParams = new URLSearchParams(window.location.search);
+				let formId = urlParams.get('form_id');
+
+				if (formId) {
+					return formId;
+				}
+
+				// Try to get from preview parameter.
+				formId = urlParams.get('wpforms_form_preview');
+				if (formId) {
+					return formId;
+				}
+
+				// Try to get from hidden input field.
+				const hiddenInput = document.querySelector('input[name="wpforms[id]"]');
+				if (hiddenInput) {
+					return hiddenInput.value;
+				}
+
+				return null;
+			})();
+		`;
+
+		return new Promise((resolve) => {
+			chrome.devtools.inspectedWindow.eval(script, (formId, isException) => {
+				resolve(formId);
+			});
+		});
+	};
+
+	useEffect(() => {
+		if (activeTab === 'entries') {
+			getFormId().then(id => setFormId(id));
+		}
+	}, [activeTab]);
+
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case 'utils':
@@ -42,7 +84,7 @@ export function TabPanel() {
 			case 'errorLogs':
 				return <ErrorLog isActive={activeTab === 'errorLogs'} />;
 			case 'entries':
-				return <EntriesTable />;
+				return <EntriesTable formId={formId} />;
 			default:
 				return null;
 		}

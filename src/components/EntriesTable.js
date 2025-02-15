@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 
-export function EntriesTable() {
+export function EntriesTable({ formId }) {
 	const [entriesTable, setEntriesTable] = useState('');
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
 	const tableRef = useRef(null);
@@ -19,44 +19,8 @@ export function EntriesTable() {
 		}
 	}, []);
 
-	// Get form ID from various possible sources.
-	const getFormId = () => {
-		const script = `
-			(function() {
-				// Try to get form_id from URL parameters.
-				const urlParams = new URLSearchParams(window.location.search);
-				let formId = urlParams.get('form_id');
-
-				if (formId) {
-					return formId;
-				}
-
-				// Try to get from preview parameter.
-				formId = urlParams.get('wpforms_form_preview');
-				if (formId) {
-					return formId;
-				}
-
-				// Try to get from hidden input field.
-				const hiddenInput = document.querySelector('input[name="wpforms[id]"]');
-				if (hiddenInput) {
-					return hiddenInput.value;
-				}
-
-				return null;
-			})();
-		`;
-
-		return new Promise((resolve) => {
-			chrome.devtools.inspectedWindow.eval(script, (formId, isException) => {
-				resolve(isException ? null : formId);
-			});
-		});
-	};
-
 	// Fetch entries table content.
 	const fetchEntriesTable = async () => {
-		const formId = await getFormId();
 		if (!formId) {
 			console.error('Form ID not found.');
 			return;
