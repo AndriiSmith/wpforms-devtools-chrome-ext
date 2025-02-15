@@ -1,75 +1,43 @@
 .wpforms-entries-table-wrapper {
-	padding: 15px;
-	
-	&.dark-theme {
-		.wp-list-table {
-			background-color: #1e1e1e;
-			color: #ffffff;
-			
-			th, td {
-				border-color: #333333;
-			}
-			
-			tr:hover {
-				background-color: #2d2d2d;
-			}
-			
-			.row-actions {
-				color: #cccccc;
-				
-				a {
-					color: #3582c4;
-					
-					&:hover {
-						color: #4f94d4;
-					}
-				}
-			}
-		}
-	}
-	
 	.wpforms-entries-table {
 		width: 100%;
 		overflow-x: auto;
 	}
 	
 	.wp-list-table {
+		background-color: var(--background-color);
+		color: var(--text-color);
 		width: 100%;
 		border-collapse: collapse;
-		margin-top: 10px;
-		
-		th, td {
-			padding: 8px;
-			text-align: left;
-			border: 1px solid #e5e5e5;
-		}
-		
-		th {
-			background-color: #f8f8f8;
-			font-weight: 600;
-		}
-		
-		tr:hover {
-			background-color: #f5f5f5;
-		}
-		
-		.row-actions {
-			color: #666;
-			font-size: 13px;
-			padding: 2px 0 0;
-			visibility: hidden;
-			
-			a {
-				text-decoration: none;
-				
-				&:hover {
-					text-decoration: underline;
-				}
+
+		tr {
+			background: var(--background-color);
+
+			&:hover {
+				background-color: var(--tab-hover-color);
 			}
 		}
 		
-		tr:hover .row-actions {
-			visibility: visible;
+
+		th, td {
+			padding: 4px 8px;
+			text-align: left;
+			border-bottom: 1px solid var(--border-color);
+		}
+		
+		th {
+			padding: 8px;
+			text-align: left;
+			font-weight: 500;
+			position: sticky;
+			top: 0;
+			background: var(--background-color);
+			border-bottom: 1px solid var(--border-color);
+			white-space: nowrap;
+		}
+
+		tfoot {
+			display: none; 
 		}
 	}
 }

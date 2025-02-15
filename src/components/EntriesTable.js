@@ -94,6 +94,11 @@ export function EntriesTable() {
 						const table = doc.querySelector('.wp-list-table');
 						
 						if (table) {
+							// Remove specified elements.
+							table.querySelectorAll('.check-column, .column-indicators, .column-primary .toggle-row').forEach(el => {
+								el.remove();
+							});
+							
 							setEntriesTable(table.outerHTML);
 						} else {
 							console.error('Entries table not found in response.');
