@@ -124,8 +124,30 @@ export function EntriesTable() {
 								idCell.className = 'column-id';
 								row.insertBefore(idCell, row.firstChild);
 							});
-							
-							setEntriesTable(table.outerHTML);
+
+							// Modify href attributes for spam and trash links.
+							const script = `
+								(function() {
+									const domain = window.location.hostname;
+									const protocol = window.location.protocol;
+									return \`\${protocol}//\${domain}\`;
+								})();
+							`;
+
+							chrome.devtools.inspectedWindow.eval(script, (baseUrl, isException) => {
+								if (!isException && baseUrl) {
+									table.querySelectorAll('a.mark-spam, a.trash').forEach(link => {
+										const href = link.getAttribute('href');
+										if (href && !href.startsWith('http')) {
+											link.setAttribute('href', baseUrl + href);
+										}
+									});
+									setEntriesTable(table.outerHTML);
+								} else {
+									console.error('Failed to get base URL:', isException);
+									setEntriesTable('');
+								}
+							});
 						} else {
 							console.error('Entries table not found in response.');
 							setEntriesTable('');
@@ -144,8 +166,107 @@ export function EntriesTable() {
 
 	// Fetch entries when component mounts.
 	useEffect(() => {
+		console.log('EntriesTable: Component mounted, setting up observers...');
 		fetchEntriesTable();
+
+		// Get current tab ID.
+		chrome.devtools.inspectedWindow.tabId;
+
+		// Setup confirmation container monitoring.
+		const script = `
+			(function() {
+				console.log('Setting up MutationObserver for confirmation container...');
+				
+				const observer = new MutationObserver((mutations) => {
+					console.log('MutationObserver: Detected DOM changes', mutations.length);
+					
+					for (const mutation of mutations) {
+						console.log('Checking mutation:', {
+							type: mutation.type,
+							addedNodes: mutation.addedNodes.length
+						});
+						
+						for (const node of mutation.addedNodes) {
+							if (node.nodeType === 1) {
+								console.log('Checking added node:', {
+									tagName: node.tagName,
+									classes: node.className,
+									hasMatch: node.matches?.('.wpforms-confirmation-container-full'),
+									hasChild: node.querySelector?.('.wpforms-confirmation-container-full')
+								});
+								
+								if (node.matches?.('.wpforms-confirmation-container-full') ||
+									node.querySelector?.('.wpforms-confirmation-container-full')
+								) {
+									console.log('Found confirmation container! Notifying extension...');
+									// Instead of trying to send a message, we'll set a flag in the DOM
+									document.body.setAttribute('data-wpforms-confirmation-shown', 'true');
+									return;
+								}
+							}
+						}
+					}
+				});
+
+				observer.observe(document.body, {
+					childList: true,
+					subtree: true
+				});
+				console.log('MutationObserver: Started observing document.body');
+
+				return 'Observer setup complete';
+			})();
+		`;
+
+		console.log('EntriesTable: Evaluating observer script...');
+		chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+			console.log('Script evaluation result:', { result, isException });
+		});
+
+		// Setup polling for the confirmation flag
+		const checkConfirmationInterval = setInterval(() => {
+			chrome.devtools.inspectedWindow.eval(`
+				document.body.hasAttribute('data-wpforms-confirmation-shown')
+			`, (hasConfirmation, isException) => {
+				if (hasConfirmation) {
+					console.log('Confirmation detected, refreshing entries table.');
+					fetchEntriesTable();
+					
+					// Remove the flag
+					chrome.devtools.inspectedWindow.eval(`
+						document.body.removeAttribute('data-wpforms-confirmation-shown');
+					`);
+				}
+			});
+		}, 1000); // Check every second
+
+		// Cleanup.
+		return () => {
+			console.log('EntriesTable: Component unmounting, cleaning up...');
+			clearInterval(checkConfirmationInterval);
+			
+			chrome.devtools.inspectedWindow.eval(`
+				(function() {
+					console.log('Cleaning up observers...');
+					const observers = document.body._wpformsObservers || [];
+					observers.forEach(observer => observer.disconnect());
+					document.body.removeAttribute('data-wpforms-confirmation-shown');
+					return 'Observers disconnected';
+				})();
+			`, (result, isException) => {
+				console.log('Cleanup result:', { result, isException });
+			});
+		};
 	}, []);
+
+	// Handle action links click events.
+	const handleActionClick = (e) => {
+		const link = e.target.closest('.column-actions a');
+		if (link) {
+			e.preventDefault();
+			window.open(link.href, '_blank');
+		}
+	};
 
 	// Handle table updates.
 	useEffect(() => {
@@ -158,6 +279,14 @@ export function EntriesTable() {
 			} else {
 				tableRef.current.classList.remove('wpforms-dark-mode');
 			}
+
+			// Add click handler for action links.
+			tableRef.current.addEventListener('click', handleActionClick);
+
+			// Cleanup event listener on unmount.
+			return () => {
+				tableRef.current?.removeEventListener('click', handleActionClick);
+			};
 		}
 	}, [entriesTable, isDarkTheme]);
 
