@@ -1,7 +1,7 @@
 // Function to check for WPForms element.
 function checkForWPFormsElement() {
   chrome.devtools.inspectedWindow.eval(
-    'document.querySelector("#wp-admin-bar-wpf-utils") !== null',
+    'document.querySelector("meta[name=\'wpf-chrome-ext\']") !== null',
     (result, isException) => {
       if (!isException && result) {
         // Element found, create panel.
