@@ -1,6 +1,7 @@
 const js = require('@eslint/js');
 const reactPlugin = require('eslint-plugin-react');
 const reactHooksPlugin = require('eslint-plugin-react-hooks');
+const globals = require('globals');
 
 module.exports = [
 	js.configs.recommended,
@@ -23,19 +24,9 @@ module.exports = [
 				}
 			},
 			globals: {
-				// Browser globals
-				window: 'readonly',
-				document: 'readonly',
-				navigator: 'readonly',
-				location: 'readonly',
-				history: 'readonly',
-				localStorage: 'readonly',
-				sessionStorage: 'readonly',
-				console: 'readonly',
-				setTimeout: 'readonly',
-				clearTimeout: 'readonly',
-				setInterval: 'readonly',
-				clearInterval: 'readonly',
+				...globals.browser,
+				...globals.es2021,
+				...globals.node,
 				
 				// Chrome Extension APIs
 				chrome: 'readonly',
@@ -47,13 +38,7 @@ module.exports = [
 				Protocol: 'readonly',
 				SDK: 'readonly',
 				UI: 'readonly',
-				Host: 'readonly',
-				
-				// Development helpers
-				process: 'readonly',
-				__dirname: 'readonly',
-				module: 'readonly',
-				require: 'readonly'
+				Host: 'readonly'
 			}
 		},
 		plugins: {
