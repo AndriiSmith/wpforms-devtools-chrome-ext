@@ -12,6 +12,9 @@ module.exports = {
 				path: path.resolve(__dirname, 'extension')
 		},
 		devtool: 'cheap-source-map',
+		optimization: {
+				minimize: false
+		},
 		module: {
 				rules: [
 						{
