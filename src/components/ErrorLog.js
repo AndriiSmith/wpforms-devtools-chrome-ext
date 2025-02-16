@@ -28,9 +28,11 @@ export function ErrorLog( { isActive } ) {
 		}, 100 );
 	}, []);
 
-	// Establish WebSocket connection and set up event handlers.
-	const connectWebSocket = useCallback(() => {
-		if ( ws.current?.readyState === WebSocket.OPEN ) return;
+	// Initialize WebSocket connection and set up event handlers.
+	const initWebSocket = useCallback(() => {
+		if ( ws.current?.readyState === WebSocket.OPEN ) {
+			return;
+		}
 
 		ws.current = new WebSocket( `ws://localhost:${WS_PORT}` );
 
@@ -47,7 +49,17 @@ export function ErrorLog( { isActive } ) {
 		ws.current.onclose = () => {
 			setIsConnected( false );
 			if ( !checkInterval.current ) {
-				checkInterval.current = setInterval( checkServer, 2000 );
+				checkInterval.current = setInterval( () => {
+					fetch( `http://localhost:${WS_PORT}/health` )
+						.then( response => {
+							if ( response.ok ) {
+								initWebSocket();
+							}
+						})
+						.catch( () => {
+							setIsConnected( false );
+						});
+				}, 2000 );
 			}
 		};
 
@@ -60,44 +72,54 @@ export function ErrorLog( { isActive } ) {
 				scrollToBottom();
 			}
 		};
-	}, [checkServer, isActive, scrollToBottom]);
+	}, [ isActive, scrollToBottom ]);
 
-	// Check if the WebSocket server is running by making a health check request.
-	const checkServer = useCallback(async () => {
-		try {
-			const response = await fetch( `http://localhost:${WS_PORT}/health` );
-			if ( response.ok ) {
-				connectWebSocket();
+	// Initialize connection on mount.
+	useEffect(() => {
+		// Initial connection attempt.
+		fetch( `http://localhost:${WS_PORT}/health` )
+			.then( response => {
+				if ( response.ok ) {
+					initWebSocket();
+				}
+			})
+			.catch( () => {
+				setIsConnected( false );
+				if ( !checkInterval.current ) {
+					checkInterval.current = setInterval( () => {
+						fetch( `http://localhost:${WS_PORT}/health` )
+							.then( response => {
+								if ( response.ok ) {
+									initWebSocket();
+								}
+							})
+							.catch( () => {
+								setIsConnected( false );
+							});
+					}, 2000 );
+				}
+			});
+
+		// Cleanup on unmount.
+		return () => {
+			if ( checkInterval.current ) {
+				clearInterval( checkInterval.current );
 			}
-		} catch ( error ) {
-			setIsConnected( false );
-		}
-	}, [connectWebSocket]);
+			if ( ws.current ) {
+				ws.current.close();
+			}
+			if ( scrollTimeout.current ) {
+				clearTimeout( scrollTimeout.current );
+			}
+		};
+	}, [ initWebSocket ]);
 
 	// Scroll to bottom when tab becomes active and there are log lines.
 	useEffect(() => {
-		if (isActive && logLines.length > 0) {
+		if ( isActive && logLines.length > 0 ) {
 			scrollToBottom();
 		}
-	}, [isActive, logLines, scrollToBottom]);
-
-	// Initialize server check and cleanup on unmount.
-	useEffect(() => {
-		checkServer();
-		checkInterval.current = setInterval(checkServer, 2000);
-
-		return () => {
-			if (checkInterval.current) {
-				clearInterval(checkInterval.current);
-			}
-			if (ws.current) {
-				ws.current.close();
-			}
-			if (scrollTimeout.current) {
-				clearTimeout(scrollTimeout.current);
-			}
-		};
-	}, [checkServer]);
+	}, [ isActive, logLines, scrollToBottom ]);
 
 	// Show instructions if not connected to the server.
 	if ( !isConnected ) {
