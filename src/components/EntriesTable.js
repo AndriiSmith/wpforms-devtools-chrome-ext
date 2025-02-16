@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 
 export function EntriesTable({ formId }) {
@@ -20,7 +20,7 @@ export function EntriesTable({ formId }) {
 	}, []);
 
 	// Fetch entries table content.
-	const fetchEntriesTable = useCallback(async () => {
+	const fetchEntriesTable = async () => {
 		if (!formId) {
 			console.error('Form ID not found.');
 			return;
@@ -52,32 +52,157 @@ export function EntriesTable({ formId }) {
 						return response.text();
 					})
 					.then(html => {
+						// Extract entries table from the HTML response.
 						const parser = new DOMParser();
 						const doc = parser.parseFromString(html, 'text/html');
-						const table = doc.querySelector('.wpforms-table-list');
+						const table = doc.querySelector('.wp-list-table');
 						
 						if (table) {
-							setEntriesTable(table.outerHTML);
+							// Remove specified elements.
+							table.querySelectorAll('.check-column, .column-indicators, .column-primary .toggle-row').forEach(el => {
+								el.remove();
+							});
+
+							// Add ID column header.
+							const headerRow = table.querySelector('thead tr');
+							const idHeader = doc.createElement('th');
+							idHeader.textContent = 'ID';
+							idHeader.className = 'column-id';
+							headerRow.insertBefore(idHeader, headerRow.firstChild);
+
+							// Add ID column cells.
+							table.querySelectorAll('tbody tr').forEach(row => {
+								const viewLink = row.querySelector('a.view');
+								let entryId = '';
+
+								if (viewLink) {
+									const href = viewLink.getAttribute('href');
+									const match = href.match(/[?&]entry_id=(\d+)/);
+									if (match) {
+										entryId = match[1];
+									}
+								}
+
+								const idCell = doc.createElement('td');
+								idCell.textContent = entryId;
+								idCell.className = 'column-id';
+								row.insertBefore(idCell, row.firstChild);
+							});
+
+							// Modify href attributes for spam and trash links.
+							const script = `
+								(function() {
+									const domain = window.location.hostname;
+									const protocol = window.location.protocol;
+									return \`\${protocol}//\${domain}\`;
+								})();
+							`;
+
+							chrome.devtools.inspectedWindow.eval(script, (baseUrl, isException) => {
+								if (!isException && baseUrl) {
+									table.querySelectorAll('a.mark-spam, a.trash').forEach(link => {
+										const href = link.getAttribute('href');
+										if (href && !href.startsWith('http')) {
+											link.setAttribute('href', baseUrl + href);
+										}
+									});
+									setEntriesTable(table.outerHTML);
+								} else {
+									console.error('Failed to get base URL:', isException);
+									setEntriesTable('');
+								}
+							});
 						} else {
-							console.error('Entries table not found in the response.');
+							console.error('Entries table not found in response.');
+							setEntriesTable('');
 						}
 					})
 					.catch(error => {
 						console.error('Error fetching entries:', error);
+						setEntriesTable('');
 					});
+			} else {
+				console.error('Failed to get entries URL:', isException);
+				setEntriesTable('');
 			}
 		});
-	}, [formId]);
+	};
 
-	// Setup confirmation monitoring.
-	const setupConfirmationMonitoring = useCallback(() => {
-		console.log('Setting up confirmation monitoring...');
+	// Fetch entries when component mounts.
+	useEffect(() => {
+		console.log('EntriesTable: Component mounted, setting up observers...');
+
+		// Function to setup the confirmation container monitoring.
+		const setupConfirmationMonitoring = () => {
+			console.log('Setting up confirmation monitoring...');
+
+			const script = `
+				(function() {
+					console.log('Setting up MutationObserver for confirmation container...');
+					
+					// Remove any existing observers.
+					if (window._wpformsObserver) {
+						console.log('Disconnecting existing observer...');
+						window._wpformsObserver.disconnect();
+					}
+					
+					const observer = new MutationObserver((mutations) => {
+						console.log('MutationObserver: Detected DOM changes', mutations.length);
+						
+						for (const mutation of mutations) {
+							console.log('Checking mutation:', {
+								type: mutation.type,
+								addedNodes: mutation.addedNodes.length
+							});
+							
+							for (const node of mutation.addedNodes) {
+								if (node.nodeType === 1) {
+									console.log('Checking added node:', {
+										tagName: node.tagName,
+										classes: node.className,
+										hasMatch: node.matches?.('.wpforms-confirmation-container-full'),
+										hasChild: node.querySelector?.('.wpforms-confirmation-container-full')
+									});
+									
+									if (node.matches?.('.wpforms-confirmation-container-full') ||
+										node.querySelector?.('.wpforms-confirmation-container-full')
+									) {
+										console.log('Found confirmation container! Notifying extension...');
+										document.body.setAttribute('data-wpforms-confirmation-shown', 'true');
+										return;
+									}
+								}
+							}
+						}
+					});
+
+					observer.observe(document.body, {
+						childList: true,
+						subtree: true
+					});
+					
+					// Store the observer reference for cleanup.
+					window._wpformsObserver = observer;
+					
+					console.log('MutationObserver: Started observing document.body');
+					return 'Observer setup complete';
+				})();
+			`;
+
+			chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+				console.log('Script evaluation result:', { result, isException });
+			});
+		};
+
+		// Initial setup.
+		fetchEntriesTable();
+		setupConfirmationMonitoring();
 
 		// Setup polling for the confirmation flag.
 		const checkConfirmationInterval = setInterval(() => {
 			chrome.devtools.inspectedWindow.eval(`
 				document.body.hasAttribute('data-wpforms-confirmation-shown')
-			`, (hasConfirmation) => {
+			`, (hasConfirmation, isException) => {
 				if (hasConfirmation) {
 					console.log('Confirmation detected, refreshing entries table.');
 					fetchEntriesTable();
@@ -116,55 +241,46 @@ export function EntriesTable({ formId }) {
 					document.body.removeAttribute('data-wpforms-confirmation-shown');
 					return 'Observers disconnected';
 				})();
-			`, (result) => {
-				console.log('Cleanup result:', { result });
+			`, (result, isException) => {
+				console.log('Cleanup result:', { result, isException });
 			});
 		};
-	}, [fetchEntriesTable]);
+	}, []);
 
 	// Handle action links click events.
-	const handleActionClick = useCallback((e) => {
+	const handleActionClick = (e) => {
 		const link = e.target.closest('.column-actions a');
 		if (link) {
 			e.preventDefault();
 			window.open(link.href, '_blank');
 		}
-	}, []);
+	};
 
 	// Handle table updates.
 	useEffect(() => {
-		if (!tableRef.current || !entriesTable) {
-			return;
+		if (tableRef.current && entriesTable) {
+			tableRef.current.innerHTML = entriesTable;
+
+			// Add dark theme class if needed.
+			if (isDarkTheme) {
+				tableRef.current.classList.add('wpforms-dark-mode');
+			} else {
+				tableRef.current.classList.remove('wpforms-dark-mode');
+			}
+
+			// Add click handler for action links.
+			tableRef.current.addEventListener('click', handleActionClick);
+
+			// Cleanup event listener on unmount.
+			return () => {
+				tableRef.current?.removeEventListener('click', handleActionClick);
+			};
 		}
-
-		const currentTable = tableRef.current;
-		currentTable.innerHTML = entriesTable;
-
-		// Add dark theme class if needed.
-		if (isDarkTheme) {
-			currentTable.classList.add('wpforms-dark-mode');
-		} else {
-			currentTable.classList.remove('wpforms-dark-mode');
-		}
-
-		// Add click handler for action links.
-		currentTable.addEventListener('click', handleActionClick);
-
-		// Cleanup event listener on unmount.
-		return () => {
-			currentTable?.removeEventListener('click', handleActionClick);
-		};
-	}, [entriesTable, isDarkTheme, handleActionClick]);
-
-	// Setup confirmation monitoring and fetch entries.
-	useEffect(() => {
-		setupConfirmationMonitoring();
-		fetchEntriesTable();
-	}, [setupConfirmationMonitoring, fetchEntriesTable]);
+	}, [entriesTable, isDarkTheme]);
 
 	return (
 		<div className={classNames('wpforms-entries-table-wrapper', { 'dark-theme': isDarkTheme })}>
-			<div ref={tableRef} className="wpforms-entries-table"></div>
+			<div ref={tableRef} className="wpforms-entries-table" />
 		</div>
 	);
 }

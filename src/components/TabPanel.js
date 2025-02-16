@@ -97,21 +97,24 @@ export function TabPanel() {
 
 	// Check for form ID changes every second.
 	useEffect(() => {
+		let mounted = true;
+
 		const checkFormId = async () => {
+			if (!mounted) return;
+			
 			const newFormId = await getFormId();
-			if (newFormId !== formId) {
+			if (mounted && newFormId !== formId) {
 				setFormId(newFormId);
 			}
 		};
 
-		// Initial check.
 		checkFormId();
-
-		// Set up interval for periodic checks.
 		const intervalId = setInterval(checkFormId, 1000);
 
-		// Cleanup interval on unmount.
-		return () => clearInterval(intervalId);
+		return () => {
+			mounted = false;
+			clearInterval(intervalId);
+		};
 	}, [formId]);
 
 	// Switch to utils tab when form ID becomes unavailable.

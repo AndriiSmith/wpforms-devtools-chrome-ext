@@ -28,18 +28,6 @@ export function ErrorLog( { isActive } ) {
 		}, 100 );
 	}, []);
 
-	// Check if the WebSocket server is running by making a health check request.
-	const checkServer = useCallback(async () => {
-		try {
-			const response = await fetch( `http://localhost:${WS_PORT}/health` );
-			if ( response.ok ) {
-				connectWebSocket();
-			}
-		} catch ( error ) {
-			setIsConnected( false );
-		}
-	}, [connectWebSocket]);
-
 	// Establish WebSocket connection and set up event handlers.
 	const connectWebSocket = useCallback(() => {
 		if ( ws.current?.readyState === WebSocket.OPEN ) return;
@@ -73,6 +61,18 @@ export function ErrorLog( { isActive } ) {
 			}
 		};
 	}, [checkServer, isActive, scrollToBottom]);
+
+	// Check if the WebSocket server is running by making a health check request.
+	const checkServer = useCallback(async () => {
+		try {
+			const response = await fetch( `http://localhost:${WS_PORT}/health` );
+			if ( response.ok ) {
+				connectWebSocket();
+			}
+		} catch ( error ) {
+			setIsConnected( false );
+		}
+	}, [connectWebSocket]);
 
 	// Scroll to bottom when tab becomes active and there are log lines.
 	useEffect(() => {
