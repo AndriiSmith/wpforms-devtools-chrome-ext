@@ -74,7 +74,7 @@ export function TabPanel() {
 				}
 
 				// Try to get from hidden input field.
-				const hiddenInput = document.querySelector('input[name="wpforms[id]"]');
+				const hiddenInput = document.querySelector('input[name="wpforms[id]"], input[name="form_id"]');
 				if (hiddenInput) {
 					return hiddenInput.value;
 				}
