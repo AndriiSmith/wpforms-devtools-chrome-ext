@@ -4,37 +4,58 @@ import { UtilsList } from './UtilsList';
 import { LogsTable } from './LogsTable';
 import { ErrorLog } from './ErrorLog';
 import { EntriesTable } from './EntriesTable';
+import { FormPanel } from './FormPanel';
 
-const tabs = [
-	{ id: 'utils', label: 'Utils' },
-	{ id: 'logs', label: 'Logs' },
-	{ id: 'errorLogs', label: 'Error log' },
-	{ id: 'entries', label: 'Entries' },
-];
+/**
+ * Generates the list of available tabs based on form ID presence.
+ * Base tabs are always shown, while form-specific tabs appear only when formId exists.
+ */
+const getTabs = (formId) => {
+	// Base tabs that are always available.
+	const baseTabs = [
+		{ id: 'utils', label: 'Utils' },
+		{ id: 'logs', label: 'Logs' },
+		{ id: 'errorLogs', label: 'Error log' },
+	];
 
+	if (formId) {
+		return [
+			...baseTabs,
+			{ id: 'form', label: `Form #${formId}` },
+			{ id: 'entries', label: 'Entries' },
+		];
+	}
+
+	return baseTabs;
+};
+
+/**
+ * Main tab panel component that manages the display of different sections.
+ * Handles theme changes, form ID detection, and tab switching.
+ */
 export function TabPanel() {
 	const [activeTab, setActiveTab] = useState('utils');
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
 	const [formId, setFormId] = useState(null);
 
+	// Track theme changes.
 	useEffect(() => {
-		// Check if prefers-color-scheme is supported.
 		if (window.matchMedia) {
 			const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-			
-			// Initial theme check.
 			setIsDarkTheme(darkThemeQuery.matches);
 
-			// Subscribe to theme changes.
 			const themeListener = (e) => setIsDarkTheme(e.matches);
 			darkThemeQuery.addListener(themeListener);
 			
-			// Cleanup on unmount.
+			// Cleanup theme listener on unmount.
 			return () => darkThemeQuery.removeListener(themeListener);
 		}
 	}, []);
 
-	// Get form ID from various possible sources.
+	/**
+	 * Detects form ID from various sources in the inspected window.
+	 * Checks URL parameters and hidden input fields.
+	 */
 	const getFormId = () => {
 		const script = `
 			(function() {
@@ -69,12 +90,36 @@ export function TabPanel() {
 		});
 	};
 
+	// Check for form ID changes every second.
 	useEffect(() => {
-		if (activeTab === 'entries') {
-			getFormId().then(id => setFormId(id));
-		}
-	}, [activeTab]);
+		const checkFormId = async () => {
+			const newFormId = await getFormId();
+			if (newFormId !== formId) {
+				setFormId(newFormId);
+			}
+		};
 
+		// Initial check.
+		checkFormId();
+
+		// Set up interval for periodic checks.
+		const intervalId = setInterval(checkFormId, 1000);
+
+		// Cleanup interval on unmount.
+		return () => clearInterval(intervalId);
+	}, [formId]);
+
+	// Switch to utils tab when form ID becomes unavailable.
+	useEffect(() => {
+		if (!formId && (activeTab === 'entries' || activeTab === 'form')) {
+			setActiveTab('utils');
+		}
+	}, [formId, activeTab]);
+
+	/**
+	 * Renders the content for the active tab.
+	 * Form-specific tabs are only rendered when formId is available.
+	 */
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case 'utils':
@@ -84,11 +129,15 @@ export function TabPanel() {
 			case 'errorLogs':
 				return <ErrorLog isActive={activeTab === 'errorLogs'} />;
 			case 'entries':
-				return <EntriesTable formId={formId} />;
+				return formId ? <EntriesTable formId={formId} /> : null;
+			case 'form':
+				return formId ? <FormPanel formId={formId} /> : null;
 			default:
 				return null;
 		}
 	};
+
+	const tabs = getTabs(formId);
 
 	return (
 		<div className={classNames('tab-panel', { 'dark-theme': isDarkTheme })}>
