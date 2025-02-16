@@ -85,6 +85,11 @@ export function TabPanel() {
 
 		return new Promise((resolve) => {
 			chrome.devtools.inspectedWindow.eval(script, (formId, isException) => {
+				if (isException) {
+					console.error('Error detecting form ID:', isException);
+					resolve(null);
+					return;
+				}
 				resolve(formId);
 			});
 		});

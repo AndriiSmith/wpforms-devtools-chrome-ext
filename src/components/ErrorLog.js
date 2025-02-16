@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classNames from 'classnames';
 import '../styles/ErrorLog.scss';
 
@@ -14,7 +14,7 @@ export function ErrorLog( { isActive } ) {
 	const scrollTimeout = useRef( null );
 
 	// Scroll to the bottom of the log content with a delay to ensure content is rendered.
-	const scrollToBottom = () => {
+	const scrollToBottom = useCallback(() => {
 		// Clear any existing scroll timeout.
 		if ( scrollTimeout.current ) {
 			clearTimeout( scrollTimeout.current );
@@ -26,10 +26,10 @@ export function ErrorLog( { isActive } ) {
 				contentRef.current.scrollTop = contentRef.current.scrollHeight;
 			}
 		}, 100 );
-	};
+	}, []);
 
 	// Check if the WebSocket server is running by making a health check request.
-	const checkServer = async () => {
+	const checkServer = useCallback(async () => {
 		try {
 			const response = await fetch( `http://localhost:${WS_PORT}/health` );
 			if ( response.ok ) {
@@ -38,10 +38,10 @@ export function ErrorLog( { isActive } ) {
 		} catch ( error ) {
 			setIsConnected( false );
 		}
-	};
+	}, [connectWebSocket]);
 
 	// Establish WebSocket connection and set up event handlers.
-	const connectWebSocket = () => {
+	const connectWebSocket = useCallback(() => {
 		if ( ws.current?.readyState === WebSocket.OPEN ) return;
 
 		ws.current = new WebSocket( `ws://localhost:${WS_PORT}` );
@@ -72,32 +72,32 @@ export function ErrorLog( { isActive } ) {
 				scrollToBottom();
 			}
 		};
-	};
+	}, [checkServer, isActive, scrollToBottom]);
 
 	// Scroll to bottom when tab becomes active and there are log lines.
-	useEffect( () => {
-		if ( isActive && logLines.length > 0 ) {
+	useEffect(() => {
+		if (isActive && logLines.length > 0) {
 			scrollToBottom();
 		}
-	}, [ isActive, logLines ] );
+	}, [isActive, logLines, scrollToBottom]);
 
 	// Initialize server check and cleanup on unmount.
-	useEffect( () => {
+	useEffect(() => {
 		checkServer();
-		checkInterval.current = setInterval( checkServer, 2000 );
+		checkInterval.current = setInterval(checkServer, 2000);
 
 		return () => {
-			if ( checkInterval.current ) {
-				clearInterval( checkInterval.current );
+			if (checkInterval.current) {
+				clearInterval(checkInterval.current);
 			}
-			if ( ws.current ) {
+			if (ws.current) {
 				ws.current.close();
 			}
-			if ( scrollTimeout.current ) {
-				clearTimeout( scrollTimeout.current );
+			if (scrollTimeout.current) {
+				clearTimeout(scrollTimeout.current);
 			}
 		};
-	}, [] );
+	}, [checkServer]);
 
 	// Show instructions if not connected to the server.
 	if ( !isConnected ) {
