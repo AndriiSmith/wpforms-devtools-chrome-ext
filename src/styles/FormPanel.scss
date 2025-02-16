@@ -35,5 +35,37 @@
 		flex: 1;
 		padding: 16px;
 		background-color: var(--background-color);
+		overflow: auto;
+
+		.loading, .error, .empty {
+			padding: 16px;
+			border-radius: 4px;
+		}
+
+		.loading {
+			color: var(--text-color);
+			background-color: var(--surface-color);
+		}
+
+		.error {
+			color: #e53935;
+			background-color: rgba(229, 57, 53, 0.1);
+		}
+
+		.empty {
+			color: var(--text-color);
+			background-color: var(--surface-color);
+		}
+
+		.form-data {
+			margin: 0;
+			padding: 16px;
+			background-color: var(--surface-color);
+			border-radius: 4px;
+			color: var(--text-color);
+			font-family: monospace;
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
 	}
 }

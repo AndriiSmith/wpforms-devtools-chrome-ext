@@ -9,7 +9,7 @@ function checkForWPFormsElement() {
           "WPForms",
           null,
           "panel.html",
-          (panel) => {
+          () => {
             console.log("WPForms panel created.");
           }
         );
