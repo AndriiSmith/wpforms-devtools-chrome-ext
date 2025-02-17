@@ -19,118 +19,118 @@ export function EntriesTable({ formId }) {
 		}
 	}, []);
 
-	// Fetch entries table content.
-	const fetchEntriesTable = async () => {
-		if (!formId) {
-			console.error('Form ID not found.');
-			return;
-		}
-
-		const script = `
-			(function() {
-				const domain = window.location.hostname;
-				const protocol = window.location.protocol;
-				const url = new URL(\`\${protocol}//\${domain}/wp-admin/admin.php\`);
-				
-				url.searchParams.append('page', 'wpforms-entries');
-				url.searchParams.append('view', 'list');
-				url.searchParams.append('form_id', '${formId}');
-				
-				return url.toString();
-			})();
-		`;
-
-		chrome.devtools.inspectedWindow.eval(script, (url, isException) => {
-			if (!isException && url) {
-				console.log('Entries URL:', url);
-				
-				fetch(url)
-					.then(response => {
-						if (!response.ok) {
-							throw new Error(`HTTP error! status: ${response.status}`);
-						}
-						return response.text();
-					})
-					.then(html => {
-						// Extract entries table from the HTML response.
-						const parser = new DOMParser();
-						const doc = parser.parseFromString(html, 'text/html');
-						const table = doc.querySelector('.wp-list-table');
-						
-						if (table) {
-							// Remove specified elements.
-							table.querySelectorAll('.check-column, .column-indicators, .column-primary .toggle-row').forEach(el => {
-								el.remove();
-							});
-
-							// Add ID column header.
-							const headerRow = table.querySelector('thead tr');
-							const idHeader = doc.createElement('th');
-							idHeader.textContent = 'ID';
-							idHeader.className = 'column-id';
-							headerRow.insertBefore(idHeader, headerRow.firstChild);
-
-							// Add ID column cells.
-							table.querySelectorAll('tbody tr').forEach(row => {
-								const viewLink = row.querySelector('a.view');
-								let entryId = '';
-
-								if (viewLink) {
-									const href = viewLink.getAttribute('href');
-									const match = href.match(/[?&]entry_id=(\d+)/);
-									if (match) {
-										entryId = match[1];
-									}
-								}
-
-								const idCell = doc.createElement('td');
-								idCell.textContent = entryId;
-								idCell.className = 'column-id';
-								row.insertBefore(idCell, row.firstChild);
-							});
-
-							// Modify href attributes for spam and trash links.
-							const script = `
-								(function() {
-									const domain = window.location.hostname;
-									const protocol = window.location.protocol;
-									return \`\${protocol}//\${domain}\`;
-								})();
-							`;
-
-							chrome.devtools.inspectedWindow.eval(script, (baseUrl, isException) => {
-								if (!isException && baseUrl) {
-									table.querySelectorAll('a.mark-spam, a.trash').forEach(link => {
-										const href = link.getAttribute('href');
-										if (href && !href.startsWith('http')) {
-											link.setAttribute('href', baseUrl + href);
-										}
-									});
-									setEntriesTable(table.outerHTML);
-								} else {
-									console.error('Failed to get base URL:', isException);
-									setEntriesTable('');
-								}
-							});
-						} else {
-							console.error('Entries table not found in response.');
-							setEntriesTable('');
-						}
-					})
-					.catch(error => {
-						console.error('Error fetching entries:', error);
-						setEntriesTable('');
-					});
-			} else {
-				console.error('Failed to get entries URL:', isException);
-				setEntriesTable('');
-			}
-		});
-	};
-
 	// Fetch entries when component mounts.
 	useEffect(() => {
 		console.log('EntriesTable: Component mounted, setting up observers...');
+
+		// Function to fetch entries table content.
+		const fetchEntriesTable = async () => {
+			if (!formId) {
+				console.error('Form ID not found.');
+				return;
+			}
+
+			const script = `
+				(function() {
+					const domain = window.location.hostname;
+					const protocol = window.location.protocol;
+					const url = new URL(\`\${protocol}//\${domain}/wp-admin/admin.php\`);
+					
+					url.searchParams.append('page', 'wpforms-entries');
+					url.searchParams.append('view', 'list');
+					url.searchParams.append('form_id', '${formId}');
+					
+					return url.toString();
+				})();
+			`;
+
+			chrome.devtools.inspectedWindow.eval(script, (url, isException) => {
+				if (!isException && url) {
+					console.log('Entries URL:', url);
+					
+					fetch(url)
+						.then(response => {
+							if (!response.ok) {
+								throw new Error(`HTTP error! status: ${response.status}`);
+							}
+							return response.text();
+						})
+						.then(html => {
+							// Extract entries table from the HTML response.
+							const parser = new DOMParser();
+							const doc = parser.parseFromString(html, 'text/html');
+							const table = doc.querySelector('.wp-list-table');
+							
+							if (table) {
+								// Remove specified elements.
+								table.querySelectorAll('.check-column, .column-indicators, .column-primary .toggle-row').forEach(el => {
+									el.remove();
+								});
+
+								// Add ID column header.
+								const headerRow = table.querySelector('thead tr');
+								const idHeader = doc.createElement('th');
+								idHeader.textContent = 'ID';
+								idHeader.className = 'column-id';
+								headerRow.insertBefore(idHeader, headerRow.firstChild);
+
+								// Add ID column cells.
+								table.querySelectorAll('tbody tr').forEach(row => {
+									const viewLink = row.querySelector('a.view');
+									let entryId = '';
+
+									if (viewLink) {
+										const href = viewLink.getAttribute('href');
+										const match = href.match(/[?&]entry_id=(\d+)/);
+										if (match) {
+											entryId = match[1];
+										}
+									}
+
+									const idCell = doc.createElement('td');
+									idCell.textContent = entryId;
+									idCell.className = 'column-id';
+									row.insertBefore(idCell, row.firstChild);
+								});
+
+								// Modify href attributes for spam and trash links.
+								const script = `
+									(function() {
+										const domain = window.location.hostname;
+										const protocol = window.location.protocol;
+										return \`\${protocol}//\${domain}\`;
+									})();
+								`;
+
+								chrome.devtools.inspectedWindow.eval(script, (baseUrl, isException) => {
+									if (!isException && baseUrl) {
+										table.querySelectorAll('a.mark-spam, a.trash').forEach(link => {
+											const href = link.getAttribute('href');
+											if (href && !href.startsWith('http')) {
+												link.setAttribute('href', baseUrl + href);
+											}
+										});
+										setEntriesTable(table.outerHTML);
+									} else {
+										console.error('Failed to get base URL:', isException);
+										setEntriesTable('');
+									}
+								});
+							} else {
+								console.error('Entries table not found in response.');
+								setEntriesTable('');
+							}
+						})
+						.catch(error => {
+							console.error('Error fetching entries:', error);
+							setEntriesTable('');
+						});
+				} else {
+					console.error('Failed to get entries URL:', isException);
+					setEntriesTable('');
+				}
+			});
+		};
 
 		// Function to setup the confirmation container monitoring.
 		const setupConfirmationMonitoring = () => {
@@ -202,7 +202,7 @@ export function EntriesTable({ formId }) {
 		const checkConfirmationInterval = setInterval(() => {
 			chrome.devtools.inspectedWindow.eval(`
 				document.body.hasAttribute('data-wpforms-confirmation-shown')
-			`, (hasConfirmation, isException) => {
+			`, (hasConfirmation) => {
 				if (hasConfirmation) {
 					console.log('Confirmation detected, refreshing entries table.');
 					fetchEntriesTable();
@@ -245,7 +245,7 @@ export function EntriesTable({ formId }) {
 				console.log('Cleanup result:', { result, isException });
 			});
 		};
-	}, []);
+	}, [formId]);
 
 	// Handle action links click events.
 	const handleActionClick = (e) => {
