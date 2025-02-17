@@ -15,6 +15,12 @@
 			text-align: right !important;
 		}
 
+		.column-actions {
+			width: 160px;
+			min-width: 160px;
+			max-width: 160px;
+		}
+
 		tr {
 			background: var(--background-color);
 
