@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getWPFormsMetaData } from '../utils/meta-data';
+import { prettyPrintJson } from 'pretty-print-json';
 
 export function FormPanel({ formId }) {
 	const [activeMenuItem, setActiveMenuItem] = useState('form_data');
@@ -93,9 +94,10 @@ export function FormPanel({ formId }) {
 		}
 
 		return (
-			<pre className="form-data">
-				{JSON.stringify(formData, null, 2)}
-			</pre>
+			<pre
+				className="form-data"
+				dangerouslySetInnerHTML={{ __html: prettyPrintJson.toHtml(formData) }}
+			/>
 		);
 	};
 

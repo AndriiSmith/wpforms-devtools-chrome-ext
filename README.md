@@ -1,6 +1,6 @@
 # DevTools Extension for WPForms
 
-A browser extension that provides advanced development tools and utilities for WPForms developers.
+A browser extension that provides development tools and utilities for WPForms developers.
 
 ## Features
 

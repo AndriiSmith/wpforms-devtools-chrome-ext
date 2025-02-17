@@ -7,13 +7,15 @@
     "dev": "webpack --mode development --watch",
     "clean": "rimraf extension/*",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "watch-log": "node src/server/logWatcher.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.15.0",
     "classnames": "^2.3.2",
+    "pretty-print-json": "^3.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tail": "^2.2.6",
