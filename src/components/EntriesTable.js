@@ -261,19 +261,21 @@ export function EntriesTable({ formId }) {
 		if (tableRef.current && entriesTable) {
 			tableRef.current.innerHTML = entriesTable;
 
-			// Add dark theme class if needed.
+			// Store the current table element
+			const table = tableRef.current;
+			
 			if (isDarkTheme) {
-				tableRef.current.classList.add('wpforms-dark-mode');
+				table.classList.add('wpforms-dark-mode');
 			} else {
-				tableRef.current.classList.remove('wpforms-dark-mode');
+				table.classList.remove('wpforms-dark-mode');
 			}
 
 			// Add click handler for action links.
-			tableRef.current.addEventListener('click', handleActionClick);
+			table.addEventListener('click', handleActionClick);
 
 			// Cleanup event listener on unmount.
 			return () => {
-				tableRef.current?.removeEventListener('click', handleActionClick);
+				table?.removeEventListener('click', handleActionClick);
 			};
 		}
 	}, [entriesTable, isDarkTheme]);
