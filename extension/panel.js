@@ -1566,7 +1566,7 @@ function FormPanel({
   const [formData, setFormData] = (0,react.useState)(null);
   const [isLoading, setIsLoading] = (0,react.useState)(false);
   const [error, setError] = (0,react.useState)(null);
-  const fetchFormData = async () => {
+  const fetchFormData = (0,react.useCallback)(async () => {
     if (!formId) {
       console.log('[WPF Debug] No form ID provided, skipping fetch.');
       return;
@@ -1611,12 +1611,12 @@ function FormPanel({
       console.log('[WPF Debug] Fetch operation completed.');
       setIsLoading(false);
     }
-  };
+  }, [formId]);
   (0,react.useEffect)(() => {
     if (activeMenuItem === 'form_data') {
       fetchFormData();
     }
-  }, [activeMenuItem, formId]);
+  }, [activeMenuItem, formId, fetchFormData]);
   if (!formId) {
     return null;
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getWPFormsMetaData } from '../utils/meta-data';
 import { prettyPrintJson } from 'pretty-print-json';
 
@@ -8,7 +8,7 @@ export function FormPanel({ formId }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const fetchFormData = async () => {
+	const fetchFormData = useCallback(async () => {
 		if (!formId) {
 			console.log('[WPF Debug] No form ID provided, skipping fetch.');
 			return;
@@ -59,13 +59,13 @@ export function FormPanel({ formId }) {
 			console.log('[WPF Debug] Fetch operation completed.');
 			setIsLoading(false);
 		}
-	};
+	}, [formId]);
 
 	useEffect(() => {
 		if (activeMenuItem === 'form_data') {
 			fetchFormData();
 		}
-	}, [activeMenuItem, formId]);
+	}, [activeMenuItem, formId, fetchFormData]);
 
 	if (!formId) {
 		return null;
