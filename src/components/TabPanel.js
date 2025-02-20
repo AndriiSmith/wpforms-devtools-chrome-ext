@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync, faCog, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { UtilsList } from './UtilsList';
 import { LogsTable } from './LogsTable';
 import { ErrorLog } from './ErrorLog';
@@ -37,6 +39,7 @@ export function TabPanel() {
 	const [activeTab, setActiveTab] = useState('utils');
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
 	const [formId, setFormId] = useState(null);
+	const [showSettings, setShowSettings] = useState(false);
 
 	// Track theme changes.
 	useEffect(() => {
@@ -150,20 +153,55 @@ export function TabPanel() {
 	return (
 		<div className={classNames('tab-panel', { 'dark-theme': isDarkTheme })}>
 			<div className="tab-panel__header">
-				{tabs.map(tab => (
-					<button
-						key={tab.id}
-						className={classNames('tab-panel__tab', {
-							'tab-panel__tab--active': activeTab === tab.id
-						})}
-						onClick={() => setActiveTab(tab.id)}
-					>
-						{tab.label}
+				<div className="tab-panel__toolbar tab-panel__toolbar--tabs">
+					{tabs.map(tab => (
+						<button
+							key={tab.id}
+							className={classNames('tab-panel__tab', {
+								'tab-panel__tab--active': activeTab === tab.id
+							})}
+							onClick={() => setActiveTab(tab.id)}
+						>
+							{tab.label}
+						</button>
+					))}
+				</div>
+				<div className="tab-panel__toolbar tab-panel__toolbar--actions">
+					<button className="tab-panel__icon-button" title="Reload">
+						<FontAwesomeIcon icon={faSync} />
 					</button>
-				))}
+				</div>
+				<div className="tab-panel__toolbar tab-panel__toolbar--settings">
+					<button 
+						className="tab-panel__icon-button"
+						onClick={() => setShowSettings(true)}
+						title="Settings"
+					>
+						<FontAwesomeIcon icon={faCog} />
+					</button>
+				</div>
 			</div>
 			<div className="tab-panel__content">
 				{renderTabContent()}
+				{showSettings && (
+					<div className="tab-panel__settings-overlay">
+						<div className="tab-panel__settings-popup">
+							<div className="tab-panel__settings-header">
+								<h2>Settings</h2>
+								<button 
+									className="tab-panel__icon-button"
+									onClick={() => setShowSettings(false)}
+									title="Close"
+								>
+									<FontAwesomeIcon icon={faTimes} />
+								</button>
+							</div>
+							<div className="tab-panel__settings-content">
+								{/* Settings content will be added later */}
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
