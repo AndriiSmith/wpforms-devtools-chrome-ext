@@ -14834,6 +14834,7 @@ function TabPanel() {
   const [isDarkTheme, setIsDarkTheme] = (0,react.useState)(false);
   const [formId, setFormId] = (0,react.useState)(null);
   const [showSettings, setShowSettings] = (0,react.useState)(false);
+  const [reloadKey, setReloadKey] = (0,react.useState)(0);
 
   // Track theme changes.
   (0,react.useEffect)(() => {
@@ -14922,19 +14923,26 @@ function TabPanel() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'utils':
-        return /*#__PURE__*/react.createElement(UtilsList, null);
+        return /*#__PURE__*/react.createElement(UtilsList, {
+          key: reloadKey
+        });
       case 'logs':
-        return /*#__PURE__*/react.createElement(LogsTable, null);
+        return /*#__PURE__*/react.createElement(LogsTable, {
+          key: reloadKey
+        });
       case 'errorLogs':
         return /*#__PURE__*/react.createElement(ErrorLog, {
+          key: reloadKey,
           isActive: activeTab === 'errorLogs'
         });
       case 'entries':
         return formId ? /*#__PURE__*/react.createElement(EntriesTable, {
+          key: reloadKey,
           formId: formId
         }) : null;
       case 'form':
         return formId ? /*#__PURE__*/react.createElement(FormPanel, {
+          key: reloadKey,
           formId: formId
         }) : null;
       default:
@@ -14960,7 +14968,8 @@ function TabPanel() {
     className: "tab-panel__toolbar tab-panel__toolbar--actions"
   }, /*#__PURE__*/react.createElement("button", {
     className: "tab-panel__icon-button",
-    title: "Reload"
+    title: "Reload",
+    onClick: () => setReloadKey(prev => prev + 1)
   }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
     icon: faSync
   }))), /*#__PURE__*/react.createElement("div", {

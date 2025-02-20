@@ -40,6 +40,7 @@ export function TabPanel() {
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
 	const [formId, setFormId] = useState(null);
 	const [showSettings, setShowSettings] = useState(false);
+	const [reloadKey, setReloadKey] = useState(0);
 
 	// Track theme changes.
 	useEffect(() => {
@@ -134,15 +135,15 @@ export function TabPanel() {
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case 'utils':
-				return <UtilsList />;
+				return <UtilsList key={reloadKey} />;
 			case 'logs':
-				return <LogsTable />;
+				return <LogsTable key={reloadKey} />;
 			case 'errorLogs':
-				return <ErrorLog isActive={activeTab === 'errorLogs'} />;
+				return <ErrorLog key={reloadKey} isActive={activeTab === 'errorLogs'} />;
 			case 'entries':
-				return formId ? <EntriesTable formId={formId} /> : null;
+				return formId ? <EntriesTable key={reloadKey} formId={formId} /> : null;
 			case 'form':
-				return formId ? <FormPanel formId={formId} /> : null;
+				return formId ? <FormPanel key={reloadKey} formId={formId} /> : null;
 			default:
 				return null;
 		}
@@ -167,7 +168,11 @@ export function TabPanel() {
 					))}
 				</div>
 				<div className="tab-panel__toolbar tab-panel__toolbar--actions">
-					<button className="tab-panel__icon-button" title="Reload">
+					<button 
+						className="tab-panel__icon-button" 
+						title="Reload"
+						onClick={() => setReloadKey(prev => prev + 1)}
+					>
 						<FontAwesomeIcon icon={faSync} />
 					</button>
 				</div>
