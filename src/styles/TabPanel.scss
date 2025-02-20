@@ -123,8 +123,8 @@ body {
 		bottom: 0;
 		background-color: rgba(0, 0, 0, 0.5);
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		align-items: flex-start;
+		justify-content: flex-end;
 		z-index: 1000;
 	}
 
@@ -132,11 +132,13 @@ body {
 		background-color: var(--surface-color);
 		border-radius: 8px;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-		width: 400px;
+		width: 600px;
+        height: calc( 100vh - 54px );
 		max-width: 90%;
 		max-height: 90vh;
 		display: flex;
 		flex-direction: column;
+        margin: 10px;
 	}
 
 	&__settings-header {
