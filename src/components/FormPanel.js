@@ -89,14 +89,14 @@ export function FormPanel({ formId }) {
 			return <div className="error">Error: {error}</div>;
 		}
 
-		if (!formData) {
+		if (!formData || !formData.data) {
 			return <div className="empty">No form data available.</div>;
 		}
 
 		return (
 			<pre
 				className="form-data"
-				dangerouslySetInnerHTML={{ __html: prettyPrintJson.toHtml(formData) }}
+				dangerouslySetInnerHTML={{ __html: prettyPrintJson.toHtml(formData.data) }}
 			/>
 		);
 	};

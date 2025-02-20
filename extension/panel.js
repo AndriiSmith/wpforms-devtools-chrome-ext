@@ -1641,7 +1641,7 @@ function FormPanel({
         className: "error"
       }, "Error: ", error);
     }
-    if (!formData) {
+    if (!formData || !formData.data) {
       return /*#__PURE__*/react.createElement("div", {
         className: "empty"
       }, "No form data available.");
@@ -1649,7 +1649,7 @@ function FormPanel({
     return /*#__PURE__*/react.createElement("pre", {
       className: "form-data",
       dangerouslySetInnerHTML: {
-        __html: prettyPrintJson.toHtml(formData)
+        __html: prettyPrintJson.toHtml(formData.data)
       }
     });
   };
