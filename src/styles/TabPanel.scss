@@ -161,7 +161,7 @@ body {
 	}
 
 	&__setting-item {
-		margin-bottom: 16px;
+		margin-bottom: 5px;
 		display: flex;
 		align-items: center;
 		gap: 16px;
@@ -175,16 +175,17 @@ body {
 
 	&__text-input {
 		flex: 1;
-		padding: 8px;
+		padding: 6px;
 		border: 1px solid var(--border-color);
 		border-radius: 4px;
 		background: var(--background-color);
 		color: var(--text-color);
-		font-size: 14px;
+		font-size: 12px;
+        font-family: 'Droid Sans Mono Dotted', 'Consolas', monospace;
 
 		&:focus {
 			outline: none;
-			border-color: var(--primary-color);
+			border-color: var(--accent-color);
 		}
 	}
 
