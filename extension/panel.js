@@ -14978,11 +14978,14 @@ function TabPanel() {
     }
   }, [formId, activeTab]);
 
-  // Load error log path from storage.
+  // Load settings from storage.
   (0,react.useEffect)(() => {
-    chrome.storage.local.get(['errorLogPath'], result => {
+    chrome.storage.local.get(['errorLogPath', 'extensionDirPath'], result => {
       if (result.errorLogPath) {
         setErrorLogPath(result.errorLogPath);
+      }
+      if (result.extensionDirPath) {
+        setExtensionDirPath(result.extensionDirPath);
       }
     });
   }, []);
@@ -14995,6 +14998,10 @@ function TabPanel() {
   };
   const handleExtensionDirPathChange = e => {
     setExtensionDirPath(e.target.value);
+    // Save to storage.
+    chrome.storage.local.set({
+      extensionDirPath: e.target.value
+    });
   };
 
   /**
