@@ -131,7 +131,7 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 				<div className="server-instructions">
 					<p>To view error log, run the following command in terminal:</p>
 					<pre className="command-line">
-						cd {extensionDirPath || 'path/to/extension'} && node src/server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
+						cd {extensionDirPath || 'path/to/extension'} && node server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
 					</pre>
 				</div>
 			</div>

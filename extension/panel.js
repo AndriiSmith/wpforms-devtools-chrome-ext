@@ -14303,7 +14303,7 @@ function ErrorLog({
       className: "server-instructions"
     }, /*#__PURE__*/react.createElement("p", null, "To view error log, run the following command in terminal:"), /*#__PURE__*/react.createElement("pre", {
       className: "command-line"
-    }, "cd ", extensionDirPath || 'path/to/extension', " && node src/server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
+    }, "cd ", extensionDirPath || 'path/to/extension', " && node server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
   }
 
   // Render log content.
