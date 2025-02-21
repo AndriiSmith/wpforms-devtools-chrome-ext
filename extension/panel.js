@@ -14177,6 +14177,8 @@ function LogsTable() {
 
 
 
+
+
 // WebSocket server port.
 const WS_PORT = 8077;
 
@@ -14191,12 +14193,14 @@ function ErrorLog({
   const [logLines, setLogLines] = (0,react.useState)([]);
   const [isConnected, setIsConnected] = (0,react.useState)(false);
   const contentRef = (0,react.useRef)(null);
+  const [scrollToBottom, setScrollToBottom] = (0,react.useState)(true);
+  const [copySuccess, setCopySuccess] = (0,react.useState)(false);
   const ws = (0,react.useRef)(null);
   const checkInterval = (0,react.useRef)(null);
   const scrollTimeout = (0,react.useRef)(null);
 
   // Scroll to the bottom of the log content with a delay to ensure content is rendered.
-  const scrollToBottom = (0,react.useCallback)(() => {
+  const scrollToBottomCallback = (0,react.useCallback)(() => {
     // Clear any existing scroll timeout.
     if (scrollTimeout.current) {
       clearTimeout(scrollTimeout.current);
@@ -14247,10 +14251,10 @@ function ErrorLog({
       const newLines = JSON.parse(event.data);
       setLogLines(prevLines => [...prevLines, ...newLines]);
       if (isActive) {
-        scrollToBottom();
+        scrollToBottomCallback();
       }
     };
-  }, [isActive, scrollToBottom]);
+  }, [isActive, scrollToBottomCallback]);
 
   // Initialize connection on mount.
   (0,react.useEffect)(() => {
@@ -14291,9 +14295,33 @@ function ErrorLog({
   // Scroll to bottom when tab becomes active and there are log lines.
   (0,react.useEffect)(() => {
     if (isActive && logLines.length > 0) {
-      scrollToBottom();
+      scrollToBottomCallback();
     }
-  }, [isActive, logLines, scrollToBottom]);
+  }, [isActive, logLines, scrollToBottomCallback]);
+  const getStartCommand = () => {
+    return `cd ${extensionDirPath || 'path/to/extension'} && node server/logWatcher.js --log ${errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}`;
+  };
+  const handleCopyCommand = async () => {
+    try {
+      // Create a temporary textarea element
+      const textArea = document.createElement('textarea');
+      textArea.value = getStartCommand();
+      document.body.appendChild(textArea);
+
+      // Select and copy the text
+      textArea.select();
+      document.execCommand('copy');
+
+      // Clean up
+      document.body.removeChild(textArea);
+
+      // Show success state briefly
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   // Show instructions if not connected to the server.
   if (!isConnected) {
@@ -14301,9 +14329,19 @@ function ErrorLog({
       className: "error-log__content"
     }, /*#__PURE__*/react.createElement("div", {
       className: "server-instructions"
-    }, /*#__PURE__*/react.createElement("p", null, "To view error log, run the following command in terminal:"), /*#__PURE__*/react.createElement("pre", {
+    }, /*#__PURE__*/react.createElement("p", null, "To view error log, run the following command in terminal:"), /*#__PURE__*/react.createElement("div", {
+      className: "command-line-wrapper"
+    }, /*#__PURE__*/react.createElement("pre", {
       className: "command-line"
-    }, "cd ", extensionDirPath || 'path/to/extension', " && node server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
+    }, getStartCommand()), /*#__PURE__*/react.createElement("button", {
+      className: classnames_default()('copy-button', {
+        'copy-success': copySuccess
+      }),
+      onClick: handleCopyCommand,
+      title: copySuccess ? 'Copied!' : 'Copy to clipboard'
+    }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
+      icon: faCopy
+    })))));
   }
 
   // Render log content.

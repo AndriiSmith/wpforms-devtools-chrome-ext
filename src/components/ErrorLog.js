@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import '../styles/ErrorLog.scss';
 
@@ -12,12 +14,14 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 	const [ logLines, setLogLines ] = useState( [] );
 	const [ isConnected, setIsConnected ] = useState( false );
 	const contentRef = useRef( null );
+	const [ scrollToBottom, setScrollToBottom ] = useState( true );
+	const [ copySuccess, setCopySuccess ] = useState(false);
 	const ws = useRef( null );
 	const checkInterval = useRef( null );
 	const scrollTimeout = useRef( null );
 
 	// Scroll to the bottom of the log content with a delay to ensure content is rendered.
-	const scrollToBottom = useCallback(() => {
+	const scrollToBottomCallback = useCallback(() => {
 		// Clear any existing scroll timeout.
 		if ( scrollTimeout.current ) {
 			clearTimeout( scrollTimeout.current );
@@ -72,10 +76,10 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 			setLogLines( ( prevLines ) => [ ...prevLines, ...newLines ] );
 
 			if ( isActive ) {
-				scrollToBottom();
+				scrollToBottomCallback();
 			}
 		};
-	}, [ isActive, scrollToBottom ]);
+	}, [ isActive, scrollToBottomCallback ]);
 
 	// Initialize connection on mount.
 	useEffect(() => {
@@ -120,9 +124,35 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 	// Scroll to bottom when tab becomes active and there are log lines.
 	useEffect(() => {
 		if ( isActive && logLines.length > 0 ) {
-			scrollToBottom();
+			scrollToBottomCallback();
 		}
-	}, [ isActive, logLines, scrollToBottom ]);
+	}, [ isActive, logLines, scrollToBottomCallback ]);
+
+	const getStartCommand = () => {
+		return `cd ${extensionDirPath || 'path/to/extension'} && node server/logWatcher.js --log ${errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}`;
+	};
+
+	const handleCopyCommand = async () => {
+		try {
+			// Create a temporary textarea element
+			const textArea = document.createElement('textarea');
+			textArea.value = getStartCommand();
+			document.body.appendChild(textArea);
+			
+			// Select and copy the text
+			textArea.select();
+			document.execCommand('copy');
+			
+			// Clean up
+			document.body.removeChild(textArea);
+			
+			// Show success state briefly
+			setCopySuccess(true);
+			setTimeout(() => setCopySuccess(false), 2000);
+		} catch (err) {
+			console.error('Failed to copy text: ', err);
+		}
+	};
 
 	// Show instructions if not connected to the server.
 	if ( !isConnected ) {
@@ -130,9 +160,16 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 			<div className="error-log__content">
 				<div className="server-instructions">
 					<p>To view error log, run the following command in terminal:</p>
-					<pre className="command-line">
-						cd {extensionDirPath || 'path/to/extension'} && node server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
-					</pre>
+					<div className="command-line-wrapper">
+						<pre className="command-line">{getStartCommand()}</pre>
+						<button 
+							className={classNames('copy-button', { 'copy-success': copySuccess })}
+							onClick={handleCopyCommand}
+							title={copySuccess ? 'Copied!' : 'Copy to clipboard'}
+						>
+							<FontAwesomeIcon icon={faCopy} />
+						</button>
+					</div>
 				</div>
 			</div>
 		);
