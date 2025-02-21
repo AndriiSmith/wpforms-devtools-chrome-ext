@@ -14180,7 +14180,8 @@ function LogsTable() {
 // WebSocket server port.
 const WS_PORT = 8077;
 function ErrorLog({
-  isActive
+  isActive,
+  errorLogPath
 }) {
   const [logLines, setLogLines] = (0,react.useState)([]);
   const [isConnected, setIsConnected] = (0,react.useState)(false);
@@ -14297,7 +14298,7 @@ function ErrorLog({
       className: "server-instructions"
     }, /*#__PURE__*/react.createElement("p", null, "To view error log, run the following command in terminal:"), /*#__PURE__*/react.createElement("pre", {
       className: "command-line"
-    }, "cd c:/www/DevTools.ext && node src/server/logWatcher.js")));
+    }, "cd path/to/extension && node src/server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
   }
 
   // Render log content.
@@ -14951,7 +14952,8 @@ function TabPanel() {
       case 'errorLogs':
         return /*#__PURE__*/react.createElement(ErrorLog, {
           key: reloadKey,
-          isActive: activeTab === 'errorLogs'
+          isActive: activeTab === 'errorLogs',
+          errorLogPath: errorLogPath
         });
       case 'entries':
         return formId ? /*#__PURE__*/react.createElement(EntriesTable, {

@@ -5,7 +5,7 @@ import '../styles/ErrorLog.scss';
 // WebSocket server port.
 const WS_PORT = 8077;
 
-export function ErrorLog( { isActive } ) {
+export function ErrorLog( { isActive, errorLogPath } ) {
 	const [ logLines, setLogLines ] = useState( [] );
 	const [ isConnected, setIsConnected ] = useState( false );
 	const contentRef = useRef( null );
@@ -128,7 +128,7 @@ export function ErrorLog( { isActive } ) {
 				<div className="server-instructions">
 					<p>To view error log, run the following command in terminal:</p>
 					<pre className="command-line">
-						cd c:/www/DevTools.ext && node src/server/logWatcher.js
+						cd path/to/extension && node src/server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
 					</pre>
 				</div>
 			</div>

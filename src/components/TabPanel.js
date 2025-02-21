@@ -156,7 +156,7 @@ export function TabPanel() {
 			case 'logs':
 				return <LogsTable key={reloadKey} />;
 			case 'errorLogs':
-				return <ErrorLog key={reloadKey} isActive={activeTab === 'errorLogs'} />;
+				return <ErrorLog key={reloadKey} isActive={activeTab === 'errorLogs'} errorLogPath={errorLogPath} />;
 			case 'entries':
 				return formId ? <EntriesTable key={reloadKey} formId={formId} /> : null;
 			case 'form':
