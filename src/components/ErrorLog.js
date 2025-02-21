@@ -5,7 +5,10 @@ import '../styles/ErrorLog.scss';
 // WebSocket server port.
 const WS_PORT = 8077;
 
-export function ErrorLog( { isActive, errorLogPath } ) {
+/**
+ * ErrorLog component for displaying PHP error logs in real-time.
+ */
+export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 	const [ logLines, setLogLines ] = useState( [] );
 	const [ isConnected, setIsConnected ] = useState( false );
 	const contentRef = useRef( null );
@@ -128,7 +131,7 @@ export function ErrorLog( { isActive, errorLogPath } ) {
 				<div className="server-instructions">
 					<p>To view error log, run the following command in terminal:</p>
 					<pre className="command-line">
-						cd path/to/extension && node src/server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
+						cd {extensionDirPath || 'path/to/extension'} && node src/server/logWatcher.js --log {errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}
 					</pre>
 				</div>
 			</div>

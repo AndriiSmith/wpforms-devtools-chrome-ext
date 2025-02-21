@@ -7,6 +7,7 @@ import { LogsTable } from './LogsTable';
 import { ErrorLog } from './ErrorLog';
 import { EntriesTable } from './EntriesTable';
 import { FormPanel } from './FormPanel';
+import { Settings } from './Settings';
 
 /**
  * Generates the list of available tabs based on form ID presence.
@@ -42,6 +43,7 @@ export function TabPanel() {
 	const [showSettings, setShowSettings] = useState(false);
 	const [reloadKey, setReloadKey] = useState(0);
 	const [errorLogPath, setErrorLogPath] = useState('');
+	const [extensionDirPath, setExtensionDirPath] = useState('');
 
 	// Track theme changes.
 	useEffect(() => {
@@ -139,10 +141,13 @@ export function TabPanel() {
 	}, []);
 
 	const handleErrorLogPathChange = (e) => {
-		const newPath = e.target.value;
-		setErrorLogPath(newPath);
+		setErrorLogPath(e.target.value);
 		// Save to storage.
-		chrome.storage.local.set({ errorLogPath: newPath });
+		chrome.storage.local.set({ errorLogPath: e.target.value });
+	};
+
+	const handleExtensionDirPathChange = (e) => {
+		setExtensionDirPath(e.target.value);
 	};
 
 	/**
@@ -156,7 +161,12 @@ export function TabPanel() {
 			case 'logs':
 				return <LogsTable key={reloadKey} />;
 			case 'errorLogs':
-				return <ErrorLog key={reloadKey} isActive={activeTab === 'errorLogs'} errorLogPath={errorLogPath} />;
+				return <ErrorLog 
+					key={reloadKey} 
+					isActive={activeTab === 'errorLogs'} 
+					errorLogPath={errorLogPath}
+					extensionDirPath={extensionDirPath}
+				/>;
 			case 'entries':
 				return formId ? <EntriesTable key={reloadKey} formId={formId} /> : null;
 			case 'form':
@@ -206,33 +216,13 @@ export function TabPanel() {
 			<div className="tab-panel__content">
 				{renderTabContent()}
 				{showSettings && (
-					<div className="tab-panel__settings-overlay">
-						<div className="tab-panel__settings-popup">
-							<div className="tab-panel__settings-header">
-								<h2>Settings</h2>
-								<button 
-									className="tab-panel__icon-button"
-									onClick={() => setShowSettings(false)}
-									title="Close"
-								>
-									<FontAwesomeIcon icon={faTimes} />
-								</button>
-							</div>
-							<div className="tab-panel__settings-content">
-								<div className="tab-panel__setting-item">
-									<label htmlFor="errorLogPath">Error Log File Path:</label>
-									<input
-										type="text"
-										id="errorLogPath"
-										className="tab-panel__text-input"
-										value={errorLogPath}
-										onChange={handleErrorLogPathChange}
-										placeholder="Enter path to error log file"
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
+					<Settings
+						onClose={() => setShowSettings(false)}
+						errorLogPath={errorLogPath}
+						onErrorLogPathChange={handleErrorLogPathChange}
+						extensionDirPath={extensionDirPath}
+						onExtensionDirPathChange={handleExtensionDirPathChange}
+					/>
 				)}
 			</div>
 		</div>

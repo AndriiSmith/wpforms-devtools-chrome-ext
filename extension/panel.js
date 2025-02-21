@@ -14179,9 +14179,14 @@ function LogsTable() {
 
 // WebSocket server port.
 const WS_PORT = 8077;
+
+/**
+ * ErrorLog component for displaying PHP error logs in real-time.
+ */
 function ErrorLog({
   isActive,
-  errorLogPath
+  errorLogPath,
+  extensionDirPath
 }) {
   const [logLines, setLogLines] = (0,react.useState)([]);
   const [isConnected, setIsConnected] = (0,react.useState)(false);
@@ -14298,7 +14303,7 @@ function ErrorLog({
       className: "server-instructions"
     }, /*#__PURE__*/react.createElement("p", null, "To view error log, run the following command in terminal:"), /*#__PURE__*/react.createElement("pre", {
       className: "command-line"
-    }, "cd path/to/extension && node src/server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
+    }, "cd ", extensionDirPath || 'path/to/extension', " && node src/server/logWatcher.js --log ", errorLogPath || 'C:/bin/laragon/tmp/php_errors.log')));
   }
 
   // Render log content.
@@ -14787,7 +14792,61 @@ function FormPanel({
     className: "content"
   }, renderContent()));
 }
+;// ./src/components/Settings.js
+
+
+
+
+/**
+ * Settings popup component for configuring application settings.
+ */
+function Settings({
+  onClose,
+  errorLogPath,
+  onErrorLogPathChange,
+  extensionDirPath,
+  onExtensionDirPathChange
+}) {
+  return /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__settings-overlay"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__settings-popup"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__settings-header"
+  }, /*#__PURE__*/react.createElement("h2", null, "Settings"), /*#__PURE__*/react.createElement("button", {
+    className: "tab-panel__icon-button",
+    onClick: onClose,
+    title: "Close"
+  }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
+    icon: faTimes
+  }))), /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__settings-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__setting-item"
+  }, /*#__PURE__*/react.createElement("label", {
+    htmlFor: "errorLogPath"
+  }, "Error Log File Path:"), /*#__PURE__*/react.createElement("input", {
+    type: "text",
+    id: "errorLogPath",
+    className: "tab-panel__text-input",
+    value: errorLogPath,
+    onChange: onErrorLogPathChange,
+    placeholder: "Enter path to error log file"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__setting-item"
+  }, /*#__PURE__*/react.createElement("label", {
+    htmlFor: "extensionDirPath"
+  }, "Extension Directory Path:"), /*#__PURE__*/react.createElement("input", {
+    type: "text",
+    id: "extensionDirPath",
+    className: "tab-panel__text-input",
+    value: extensionDirPath,
+    onChange: onExtensionDirPathChange,
+    placeholder: "Enter path to extension directory"
+  })))));
+}
 ;// ./src/components/TabPanel.js
+
 
 
 
@@ -14837,6 +14896,7 @@ function TabPanel() {
   const [showSettings, setShowSettings] = (0,react.useState)(false);
   const [reloadKey, setReloadKey] = (0,react.useState)(0);
   const [errorLogPath, setErrorLogPath] = (0,react.useState)('');
+  const [extensionDirPath, setExtensionDirPath] = (0,react.useState)('');
 
   // Track theme changes.
   (0,react.useEffect)(() => {
@@ -14927,12 +14987,14 @@ function TabPanel() {
     });
   }, []);
   const handleErrorLogPathChange = e => {
-    const newPath = e.target.value;
-    setErrorLogPath(newPath);
+    setErrorLogPath(e.target.value);
     // Save to storage.
     chrome.storage.local.set({
-      errorLogPath: newPath
+      errorLogPath: e.target.value
     });
+  };
+  const handleExtensionDirPathChange = e => {
+    setExtensionDirPath(e.target.value);
   };
 
   /**
@@ -14953,7 +15015,8 @@ function TabPanel() {
         return /*#__PURE__*/react.createElement(ErrorLog, {
           key: reloadKey,
           isActive: activeTab === 'errorLogs',
-          errorLogPath: errorLogPath
+          errorLogPath: errorLogPath,
+          extensionDirPath: extensionDirPath
         });
       case 'entries':
         return formId ? /*#__PURE__*/react.createElement(EntriesTable, {
@@ -15002,32 +15065,13 @@ function TabPanel() {
     icon: faCog
   })))), /*#__PURE__*/react.createElement("div", {
     className: "tab-panel__content"
-  }, renderTabContent(), showSettings && /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__settings-overlay"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__settings-popup"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__settings-header"
-  }, /*#__PURE__*/react.createElement("h2", null, "Settings"), /*#__PURE__*/react.createElement("button", {
-    className: "tab-panel__icon-button",
-    onClick: () => setShowSettings(false),
-    title: "Close"
-  }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
-    icon: faTimes
-  }))), /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__settings-content"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__setting-item"
-  }, /*#__PURE__*/react.createElement("label", {
-    htmlFor: "errorLogPath"
-  }, "Error Log File Path:"), /*#__PURE__*/react.createElement("input", {
-    type: "text",
-    id: "errorLogPath",
-    className: "tab-panel__text-input",
-    value: errorLogPath,
-    onChange: handleErrorLogPathChange,
-    placeholder: "Enter path to error log file"
-  })))))));
+  }, renderTabContent(), showSettings && /*#__PURE__*/react.createElement(Settings, {
+    onClose: () => setShowSettings(false),
+    errorLogPath: errorLogPath,
+    onErrorLogPathChange: handleErrorLogPathChange,
+    extensionDirPath: extensionDirPath,
+    onExtensionDirPathChange: handleExtensionDirPathChange
+  })));
 }
 ;// ./src/panel.js
 
