@@ -64,6 +64,17 @@ The built extension will be available in the `extension` directory.
 3. Click "Load unpacked".
 4. Select the `extension` directory.
 
+## Settings
+
+### Error Log
+
+To setup error log monitoring
+1. Open the settings popup (cog icon in the top-right panel corner)
+2. Enter the extension directory and the error log path.
+3. Swithch to the Error Log tab
+4. Copy terminal command and run it in a separate terminal window.
+5. The log file content should appear automatically once logWatch server started.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
