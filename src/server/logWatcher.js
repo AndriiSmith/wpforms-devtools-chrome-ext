@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const { Tail } = require('tail');
 
-const ERROR_LOG_PATH = 'C:\\bin\\laragon\\tmp\\php_errors.log';
+const ERROR_LOG_PATH = 'C:/bin/laragon/tmp/php_errors.log';
 const MAX_INITIAL_LINES = 20;
 const PORT = 8077;
 

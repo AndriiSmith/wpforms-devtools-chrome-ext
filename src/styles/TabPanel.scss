@@ -160,6 +160,34 @@ body {
 		overflow-y: auto;
 	}
 
+	&__setting-item {
+		margin-bottom: 16px;
+		display: flex;
+		align-items: center;
+		gap: 16px;
+
+		label {
+			width: 30%;
+			flex-shrink: 0;
+			font-weight: 500;
+		}
+	}
+
+	&__text-input {
+		flex: 1;
+		padding: 8px;
+		border: 1px solid var(--border-color);
+		border-radius: 4px;
+		background: var(--background-color);
+		color: var(--text-color);
+		font-size: 14px;
+
+		&:focus {
+			outline: none;
+			border-color: var(--primary-color);
+		}
+	}
+
 	.tab-content {
 		font-family: inherit;
 	}

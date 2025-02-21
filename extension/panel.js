@@ -14835,6 +14835,7 @@ function TabPanel() {
   const [formId, setFormId] = (0,react.useState)(null);
   const [showSettings, setShowSettings] = (0,react.useState)(false);
   const [reloadKey, setReloadKey] = (0,react.useState)(0);
+  const [errorLogPath, setErrorLogPath] = (0,react.useState)('');
 
   // Track theme changes.
   (0,react.useEffect)(() => {
@@ -14916,6 +14917,23 @@ function TabPanel() {
     }
   }, [formId, activeTab]);
 
+  // Load error log path from storage.
+  (0,react.useEffect)(() => {
+    chrome.storage.local.get(['errorLogPath'], result => {
+      if (result.errorLogPath) {
+        setErrorLogPath(result.errorLogPath);
+      }
+    });
+  }, []);
+  const handleErrorLogPathChange = e => {
+    const newPath = e.target.value;
+    setErrorLogPath(newPath);
+    // Save to storage.
+    chrome.storage.local.set({
+      errorLogPath: newPath
+    });
+  };
+
   /**
    * Renders the content for the active tab.
    * Form-specific tabs are only rendered when formId is available.
@@ -14996,7 +15014,18 @@ function TabPanel() {
     icon: faTimes
   }))), /*#__PURE__*/react.createElement("div", {
     className: "tab-panel__settings-content"
-  })))));
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__setting-item"
+  }, /*#__PURE__*/react.createElement("label", {
+    htmlFor: "errorLogPath"
+  }, "Error Log File Path:"), /*#__PURE__*/react.createElement("input", {
+    type: "text",
+    id: "errorLogPath",
+    className: "tab-panel__text-input",
+    value: errorLogPath,
+    onChange: handleErrorLogPathChange,
+    placeholder: "Enter path to error log file"
+  })))))));
 }
 ;// ./src/panel.js
 

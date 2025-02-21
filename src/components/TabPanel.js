@@ -41,6 +41,7 @@ export function TabPanel() {
 	const [formId, setFormId] = useState(null);
 	const [showSettings, setShowSettings] = useState(false);
 	const [reloadKey, setReloadKey] = useState(0);
+	const [errorLogPath, setErrorLogPath] = useState('');
 
 	// Track theme changes.
 	useEffect(() => {
@@ -128,6 +129,22 @@ export function TabPanel() {
 		}
 	}, [formId, activeTab]);
 
+	// Load error log path from storage.
+	useEffect(() => {
+		chrome.storage.local.get(['errorLogPath'], (result) => {
+			if (result.errorLogPath) {
+				setErrorLogPath(result.errorLogPath);
+			}
+		});
+	}, []);
+
+	const handleErrorLogPathChange = (e) => {
+		const newPath = e.target.value;
+		setErrorLogPath(newPath);
+		// Save to storage.
+		chrome.storage.local.set({ errorLogPath: newPath });
+	};
+
 	/**
 	 * Renders the content for the active tab.
 	 * Form-specific tabs are only rendered when formId is available.
@@ -202,7 +219,17 @@ export function TabPanel() {
 								</button>
 							</div>
 							<div className="tab-panel__settings-content">
-								{/* Settings content will be added later */}
+								<div className="tab-panel__setting-item">
+									<label htmlFor="errorLogPath">Error Log File Path:</label>
+									<input
+										type="text"
+										id="errorLogPath"
+										className="tab-panel__text-input"
+										value={errorLogPath}
+										onChange={handleErrorLogPathChange}
+										placeholder="Enter path to error log file"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
