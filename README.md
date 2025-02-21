@@ -50,6 +50,12 @@ npm run build
 
 The built extension will be available in the `extension` directory.
 
+## Install Build
+
+1. Download the released `wpforms-devtools-chrome-ext-X.X.X.zip`
+ from the [releases](https://github.com/AndriiSmith/wpforms-devtools-chrome-ext/releases).
+2. Unzip the archive.
+
 ## Loading the Extension
 
 1. Open your browser's extension management page.
