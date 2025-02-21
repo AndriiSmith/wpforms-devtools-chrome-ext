@@ -55,6 +55,7 @@ The built extension will be available in the `extension` directory.
 1. Download the released `wpforms-devtools-chrome-ext-X.X.X.zip`
  from the [releases](https://github.com/AndriiSmith/wpforms-devtools-chrome-ext/releases).
 2. Unzip the archive.
+3. Load the extension by following the [instructions](#loading-the-extension).
 
 ## Loading the Extension
 
