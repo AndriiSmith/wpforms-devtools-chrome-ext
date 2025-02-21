@@ -27,17 +27,6 @@ export function Settings({
 				</div>
 				<div className="tab-panel__settings-content">
 					<div className="tab-panel__setting-item">
-						<label htmlFor="errorLogPath">Error Log File Path:</label>
-						<input
-							type="text"
-							id="errorLogPath"
-							className="tab-panel__text-input"
-							value={errorLogPath}
-							onChange={onErrorLogPathChange}
-							placeholder="Enter path to error log file"
-						/>
-					</div>
-					<div className="tab-panel__setting-item">
 						<label htmlFor="extensionDirPath">Extension Directory Path:</label>
 						<input
 							type="text"
@@ -46,6 +35,17 @@ export function Settings({
 							value={extensionDirPath}
 							onChange={onExtensionDirPathChange}
 							placeholder="Enter path to extension directory"
+						/>
+					</div>
+                    <div className="tab-panel__setting-item">
+						<label htmlFor="errorLogPath">Error Log File Path:</label>
+						<input
+							type="text"
+							id="errorLogPath"
+							className="tab-panel__text-input"
+							value={errorLogPath}
+							onChange={onErrorLogPathChange}
+							placeholder="Enter path to error log file"
 						/>
 					</div>
 				</div>

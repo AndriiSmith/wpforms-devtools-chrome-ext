@@ -14824,17 +14824,6 @@ function Settings({
   }, /*#__PURE__*/react.createElement("div", {
     className: "tab-panel__setting-item"
   }, /*#__PURE__*/react.createElement("label", {
-    htmlFor: "errorLogPath"
-  }, "Error Log File Path:"), /*#__PURE__*/react.createElement("input", {
-    type: "text",
-    id: "errorLogPath",
-    className: "tab-panel__text-input",
-    value: errorLogPath,
-    onChange: onErrorLogPathChange,
-    placeholder: "Enter path to error log file"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "tab-panel__setting-item"
-  }, /*#__PURE__*/react.createElement("label", {
     htmlFor: "extensionDirPath"
   }, "Extension Directory Path:"), /*#__PURE__*/react.createElement("input", {
     type: "text",
@@ -14843,6 +14832,17 @@ function Settings({
     value: extensionDirPath,
     onChange: onExtensionDirPathChange,
     placeholder: "Enter path to extension directory"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "tab-panel__setting-item"
+  }, /*#__PURE__*/react.createElement("label", {
+    htmlFor: "errorLogPath"
+  }, "Error Log File Path:"), /*#__PURE__*/react.createElement("input", {
+    type: "text",
+    id: "errorLogPath",
+    className: "tab-panel__text-input",
+    value: errorLogPath,
+    onChange: onErrorLogPathChange,
+    placeholder: "Enter path to error log file"
   })))));
 }
 ;// ./src/components/TabPanel.js
