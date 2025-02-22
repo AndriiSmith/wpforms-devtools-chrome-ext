@@ -57,6 +57,7 @@ module.exports = {
 								{ from: 'panel.html', to: '.' },
 								{ from: 'src/images', to: 'images' },
 								{ from: 'src/server', to: 'server' },
+								{ from: 'package.json', to: 'server/package.json' },
 								{
 									from: 'node_modules/pretty-print-json/dist/css/pretty-print-json.prefers.css',
 									to: 'pretty-print-json.css'
