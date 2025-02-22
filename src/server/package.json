@@ -1,0 +1,13 @@
+{
+	"name": "wpforms-devtools-server",
+	"version": "1.0.0",
+	"description": "Log watcher server for WPForms DevTools",
+	"main": "logWatcher.js",
+	"scripts": {
+		"start": "node logWatcher.js"
+	},
+	"dependencies": {
+		"tail": "^2.2.6",
+		"ws": "^8.18.0"
+	}
+}
