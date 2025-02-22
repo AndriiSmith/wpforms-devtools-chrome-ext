@@ -207,6 +207,18 @@ export function TabPanel() {
 					>
 						<FontAwesomeIcon icon={faSync} />
 					</button>
+					{activeTab === 'errorLogs' && (
+						<button 
+							className="tab-panel__icon-button" 
+							title="Clear"
+							onClick={() => {
+								// Clear error logs.
+								window.postMessage({ type: 'clearErrorLogs' }, '*');
+							}}
+						>
+							<FontAwesomeIcon icon={faTimes} />
+						</button>
+					)}
 				</div>
 				<div className="tab-panel__toolbar tab-panel__toolbar--settings">
 					<button 

@@ -15100,6 +15100,17 @@ function TabPanel() {
     onClick: () => setReloadKey(prev => prev + 1)
   }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
     icon: faSync
+  })), activeTab === 'errorLogs' && /*#__PURE__*/react.createElement("button", {
+    className: "tab-panel__icon-button",
+    title: "Clear",
+    onClick: () => {
+      // Clear error logs.
+      window.postMessage({
+        type: 'clearErrorLogs'
+      }, '*');
+    }
+  }, /*#__PURE__*/react.createElement(FontAwesomeIcon, {
+    icon: faTimes
   }))), /*#__PURE__*/react.createElement("div", {
     className: "tab-panel__toolbar tab-panel__toolbar--settings"
   }, /*#__PURE__*/react.createElement("button", {
