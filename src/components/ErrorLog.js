@@ -35,6 +35,18 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 		}, 100 );
 	}, []);
 
+	// Listen for messages from the extension.
+	useEffect(() => {
+		const handleMessage = (event) => {
+			if (event.data.type === 'clearErrorLogs') {
+				setLogLines([]);
+			}
+		};
+
+		window.addEventListener('message', handleMessage);
+		return () => window.removeEventListener('message', handleMessage);
+	}, []);
+
 	// Initialize WebSocket connection and set up event handlers.
 	const initWebSocket = useCallback(() => {
 		if ( ws.current?.readyState === WebSocket.OPEN ) {
