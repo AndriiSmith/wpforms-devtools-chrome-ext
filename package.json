@@ -1,9 +1,9 @@
 {
   "name": "wpforms-devtools",
-  "version": "1.0.0",
+  "version": "1.0.0-RC1",
   "description": "Chrome DevTools extension for WPForms",
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode production && npm run zip",
     "dev": "webpack --mode development --watch",
     "clean": "rimraf extension/*",
     "lint": "eslint src/",
