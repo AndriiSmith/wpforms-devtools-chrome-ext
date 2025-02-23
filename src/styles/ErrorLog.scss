@@ -1,83 +1,83 @@
 .error-log__content {
-    height: 100%;
-    overflow-y: auto;
-    font-family: 'Droid Sans Mono Dotted', 'Consolas', monospace;
-    font-size: 12px;
-    line-height: 1.2;
-    padding: 10px;
-    background-color: var(--surface-color);
-    color: var(--text-color);
-    box-sizing: border-box;
+	height: 100%;
+	overflow-y: auto;
+	font-family: 'Droid Sans Mono Dotted', 'Consolas', monospace;
+	font-size: 12px;
+	line-height: 1.2;
+	padding: 10px;
+	background-color: var(--surface-color);
+	color: var(--text-color);
+	box-sizing: border-box;
 
-    .log-line {
-        margin: 0;
-        padding: 2px 0;
-        white-space: pre-wrap;
+	.log-line {
+		margin: 0;
+		padding: 2px 0;
+		white-space: pre-wrap;
 
 		&:hover {
 			background-color: var(--tab-hover-color);
 		}
-    }
+	}
 
-    .new-line {
-        animation: fadeIn 0.5s ease-in;
-    }
+	.new-line {
+		animation: fadeIn 0.5s ease-in;
+	}
 
-    .server-instructions {
-        p {
-            margin: 0 0 10px 0;
-            opacity: 0.8;
-        }
+	.server-instructions {
+		p {
+			margin: 0 0 10px 0;
+			opacity: 0.8;
+		}
 
-        .command-line-wrapper {
-            position: relative;
-            display: inline-block;
-        }
+		.command-line-wrapper {
+			position: relative;
+			display: inline-block;
+		}
 
-        .command-line {
-            margin: 0;
-            padding: 10px 35px 10px 10px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-            white-space: pre;
-            display: inline-block;
-        }
+		.command-line {
+			margin: 0;
+			padding: 10px 35px 10px 10px;
+			background-color: rgba(0, 0, 0, 0.2);
+			border-radius: 4px;
+			white-space: pre;
+			display: inline-block;
+		}
 
-        .copy-button {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-color);
-            opacity: 0.6;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.2s ease;
+		.copy-button {
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			background: none;
+			border: none;
+			color: var(--text-color);
+			opacity: 0.6;
+			cursor: pointer;
+			padding: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: opacity 0.2s ease;
 
-            &:hover {
-                opacity: 1;
-            }
+			&:hover {
+				opacity: 1;
+			}
 
-            &.copy-success {
-                color: #4CAF50;
-                opacity: 1;
-            }
-        }
-    }
+			&.copy-success {
+				color: #4CAF50;
+				opacity: 1;
+			}
+		}
+	}
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-    to {
-        opacity: 1;
-        background-color: transparent;
-    }
+	from {
+		opacity: 0;
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+	to {
+		opacity: 1;
+		background-color: transparent;
+	}
 }

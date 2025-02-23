@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync, faCog, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSync, faCog, faBan } from '@fortawesome/free-solid-svg-icons';
 import { UtilsList } from './UtilsList';
 import { LogsTable } from './LogsTable';
 import { ErrorLog } from './ErrorLog';
@@ -216,7 +216,7 @@ export function TabPanel() {
 								window.postMessage({ type: 'clearErrorLogs' }, '*');
 							}}
 						>
-							<FontAwesomeIcon icon={faTimes} />
+							<FontAwesomeIcon icon={faBan} />
 						</button>
 					)}
 				</div>
