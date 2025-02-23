@@ -20,7 +20,7 @@ console.log(`Log path: ${ERROR_LOG_PATH}`);
 console.log(`Port: ${PORT}`);
 console.log(`Initial lines: ${MAX_INITIAL_LINES}`);
 
-// Створюємо HTTP сервер
+// Create HTTP server.
 const server = http.createServer((req, res) => {
     if (req.url === '/health') {
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,10 +32,10 @@ const server = http.createServer((req, res) => {
     res.end();
 });
 
-// Створюємо WebSocket сервер, прикріплений до HTTP сервера
+// Create WebSocket server attached to HTTP server.
 const wss = new WebSocket.Server({ server });
 
-// Функція для читання останніх N рядків з файлу
+// Function to read last N lines from file.
 function getLastNLines(filePath, n) {
     try {
         const content = fs.readFileSync(filePath, 'utf8');
@@ -50,11 +50,11 @@ function getLastNLines(filePath, n) {
 wss.on('connection', (ws) => {
     console.log('Client connected');
 
-    // Відправляємо початкові рядки
+    // Send initial lines.
     const initialLines = getLastNLines(ERROR_LOG_PATH, MAX_INITIAL_LINES);
     ws.send(JSON.stringify(initialLines));
 
-    // Створюємо tail для відстеження нових рядків
+    // Create tail to track new lines.
     const tail = new Tail(ERROR_LOG_PATH);
 
     tail.on('line', (data) => {
@@ -71,7 +71,7 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Запускаємо сервер
+// Start server.
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
