@@ -1,14 +1,15 @@
 {
   "name": "wpforms-devtools",
-  "version": "1.0.0",
+  "version": "1.0.0-RC1",
   "description": "Chrome DevTools extension for WPForms",
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode production && npm run zip",
     "dev": "webpack --mode development --watch",
     "clean": "rimraf extension/*",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
-    "watch-log": "node src/server/logWatcher.js"
+    "watch-log": "node src/server/logWatcher.js",
+    "zip": "node scripts/zip.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -28,6 +29,7 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-react": "^7.23.0",
     "@eslint/js": "^8.56.0",
+    "adm-zip": "^0.5.16",
     "babel-loader": "^9.1.3",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
