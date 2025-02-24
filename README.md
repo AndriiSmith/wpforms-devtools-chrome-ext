@@ -1,4 +1,4 @@
-# Chrome DevTools Extension for WPForms
+# WPForms DevTools Chrome Extension.
 
 A browser extension that provides development tools and utilities for WPForms developers.
 
