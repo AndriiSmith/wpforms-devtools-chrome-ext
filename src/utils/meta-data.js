@@ -9,12 +9,7 @@ export const getWPFormsMetaData = () => {
 		chrome.devtools.inspectedWindow.eval(
 			`(function() {
 				const meta = document.querySelector('meta[name="wpf-chrome-ext"]');
-				console.log('[WPF Debug] Meta tag found:', meta ? 'yes' : 'no');
-
-                const json = meta.getAttribute('content');
-
-                console.log( '[WPF Debug] Meta tag content:', json );
-
+				const json = meta.getAttribute('content');
 				return meta ? JSON.parse(json) : null;
 			})()`,
 			(result, isException) => {
