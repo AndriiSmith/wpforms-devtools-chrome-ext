@@ -141,7 +141,7 @@ export function ErrorLog({ isActive, errorLogPath, extensionDirPath }) {
 	}, [ isActive, logLines, scrollToBottomCallback ]);
 
 	const getStartCommand = () => {
-		return `cd ${extensionDirPath || 'path/to/extension'} && node server/logWatcher.js --log ${errorLogPath || 'C:/bin/laragon/tmp/php_errors.log'}`;
+		return `cd ${extensionDirPath || '/path/to/extension'} && node server/logWatcher.js --log ${errorLogPath || '/path/to/php_errors.log'}`;
 	};
 
 	const handleCopyCommand = async () => {
