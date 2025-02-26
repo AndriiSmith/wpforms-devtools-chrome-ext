@@ -1,62 +1,62 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import classNames from 'classnames';
 
 // Checkbox icon component.
-function CheckboxIcon({ checked }) {
-	if (checked === null) return null;
-	
+function CheckboxIcon( {checked} ) {
+	if ( checked === null ) return null;
+
 	return (
-		<span className={classNames('menu-item__checkbox', {
+		<span className={ classNames( 'menu-item__checkbox', {
 			'menu-item__checkbox--checked': checked
-		})}>
-			{checked ? '✓' : '○'}
+		} ) }>
+			{ checked ? '✓' : '○' }
 		</span>
 	);
 }
 
-export function MenuItem({ item }) {
-	const [isOpen, setIsOpen] = useState(false);
+export function MenuItem( {item} ) {
+	const [ isOpen, setIsOpen ] = useState( false );
 
 	const hasChildren = item.children && item.children.length > 0;
 
-	const handleClick = (e) => {
-		if (hasChildren) {
+	const handleClick = ( e ) => {
+		if ( hasChildren ) {
 			e.preventDefault();
-			setIsOpen(!isOpen);
-		} else if (item.id) {
+			setIsOpen( ! isOpen );
+		} else if ( item.id ) {
 			e.preventDefault();
 			// Click on the original element.
 			chrome.devtools.inspectedWindow.eval(
-				`document.querySelector('#${item.id} a').click()`
+				`document.querySelector('#${ item.id } a').click()`
 			);
 		}
 	};
 
 	return (
-		<li className={classNames('menu-item', {
+		<li className={ classNames( 'menu-item', {
 			'menu-item--has-children': hasChildren,
 			'menu-item--open': isOpen
-		})}>
+		} ) }>
 			<a
-				href={item.href}
+				href={ item.href }
 				className="menu-item__link"
-				onClick={handleClick}
+				onClick={ handleClick }
 			>
 				<span className="menu-item__content">
-					<CheckboxIcon checked={item.checked} />
-					<span className="menu-item__text">{item.text}</span>
+					<CheckboxIcon checked={ item.checked }/>
+					<span className="menu-item__text">{ item.text }</span>
 				</span>
-				{hasChildren && (
+				{ hasChildren && (
 					<span className="menu-item__arrow">▾</span>
-				)}
+				) }
 			</a>
-			{hasChildren && isOpen && (
+			{ hasChildren && isOpen && (
 				<ul className="menu-item__submenu">
-					{item.children.map((child, index) => (
-						<MenuItem key={child.id || index} item={child} />
-					))}
+					{ item.children.map( ( child, index ) => (
+						<MenuItem key={ child.id || index } item={ child }/>
+					) ) }
 				</ul>
-			)}
+			) }
 		</li>
 	);
 }

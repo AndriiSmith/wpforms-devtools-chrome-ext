@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync, faCog, faBan } from '@fortawesome/free-solid-svg-icons';
-import { UtilsList } from './UtilsList';
-import { LogsTable } from './LogsTable';
-import { ErrorLog } from './ErrorLog';
-import { EntriesTable } from './EntriesTable';
-import { FormPanel } from './FormPanel';
-import { Settings } from './Settings';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSync, faCog, faBan} from '@fortawesome/free-solid-svg-icons';
+import {UtilsList} from './UtilsList';
+import {LogsTable} from './LogsTable';
+import {ErrorLog} from './ErrorLog';
+import {EntriesTable} from './EntriesTable';
+import {FormPanel} from './FormPanel';
+import {Settings} from './Settings';
 
 /**
  * Generates the list of available tabs based on form ID presence.
  * Base tabs are always shown, while form-specific tabs appear only when formId exists.
  */
-const getTabs = (formId) => {
+const getTabs = ( formId ) => {
 	// Base tabs that are always available.
 	const baseTabs = [
-		{ id: 'utils', label: 'Utils' },
-		{ id: 'logs', label: 'Logs' },
-		{ id: 'errorLogs', label: 'Error log' },
+		{id: 'utils', label: 'Utils'},
+		{id: 'logs', label: 'Logs'},
+		{id: 'errorLogs', label: 'Error log'},
 	];
 
-	if (formId) {
+	if ( formId ) {
 		return [
 			...baseTabs,
-			{ id: 'form', label: `Form #${formId}` },
-			{ id: 'entries', label: 'Entries' },
+			{id: 'form', label: `Form #${ formId }`},
+			{id: 'entries', label: 'Entries'},
 		];
 	}
 
@@ -37,27 +37,27 @@ const getTabs = (formId) => {
  * Handles theme changes, form ID detection, and tab switching.
  */
 export function TabPanel() {
-	const [activeTab, setActiveTab] = useState('utils');
-	const [isDarkTheme, setIsDarkTheme] = useState(false);
-	const [formId, setFormId] = useState(null);
-	const [showSettings, setShowSettings] = useState(false);
-	const [reloadKey, setReloadKey] = useState(0);
-	const [errorLogPath, setErrorLogPath] = useState('');
-	const [extensionDirPath, setExtensionDirPath] = useState('');
+	const [ activeTab, setActiveTab ] = useState( 'utils' );
+	const [ isDarkTheme, setIsDarkTheme ] = useState( false );
+	const [ formId, setFormId ] = useState( null );
+	const [ showSettings, setShowSettings ] = useState( false );
+	const [ reloadKey, setReloadKey ] = useState( 0 );
+	const [ errorLogPath, setErrorLogPath ] = useState( '' );
+	const [ extensionDirPath, setExtensionDirPath ] = useState( '' );
 
 	// Track theme changes.
-	useEffect(() => {
-		if (window.matchMedia) {
-			const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-			setIsDarkTheme(darkThemeQuery.matches);
+	useEffect( () => {
+		if ( window.matchMedia ) {
+			const darkThemeQuery = window.matchMedia( '(prefers-color-scheme: dark)' );
+			setIsDarkTheme( darkThemeQuery.matches );
 
-			const themeListener = (e) => setIsDarkTheme(e.matches);
-			darkThemeQuery.addListener(themeListener);
-			
+			const themeListener = ( e ) => setIsDarkTheme( e.matches );
+			darkThemeQuery.addListener( themeListener );
+
 			// Cleanup theme listener on unmount.
-			return () => darkThemeQuery.removeListener(themeListener);
+			return () => darkThemeQuery.removeListener( themeListener );
 		}
-	}, []);
+	}, [] );
 
 	/**
 	 * Detects form ID from various sources in the inspected window.
@@ -90,69 +90,69 @@ export function TabPanel() {
 			})();
 		`;
 
-		return new Promise((resolve) => {
-			chrome.devtools.inspectedWindow.eval(script, (formId, isException) => {
-				if (isException) {
-					console.error('Error detecting form ID:', isException);
-					resolve(null);
+		return new Promise( ( resolve ) => {
+			chrome.devtools.inspectedWindow.eval( script, ( formId, isException ) => {
+				if ( isException ) {
+					console.error( 'Error detecting form ID:', isException );
+					resolve( null );
 					return;
 				}
-				resolve(formId);
-			});
-		});
+				resolve( formId );
+			} );
+		} );
 	};
 
 	// Check for form ID changes every second.
-	useEffect(() => {
+	useEffect( () => {
 		let mounted = true;
 
 		const checkFormId = async () => {
-			if (!mounted) return;
-			
+			if ( ! mounted ) return;
+
 			const newFormId = await getFormId();
-			if (mounted && newFormId !== formId) {
-				setFormId(newFormId);
+			if ( mounted && newFormId !== formId ) {
+				setFormId( newFormId );
 			}
 		};
 
 		checkFormId();
-		const intervalId = setInterval(checkFormId, 1000);
+		const intervalId = setInterval( checkFormId, 1000 );
 
 		return () => {
 			mounted = false;
-			clearInterval(intervalId);
+			clearInterval( intervalId );
 		};
-	}, [formId]);
+	}, [ formId ] );
 
 	// Switch to utils tab when form ID becomes unavailable.
-	useEffect(() => {
-		if (!formId && (activeTab === 'entries' || activeTab === 'form')) {
-			setActiveTab('utils');
+	useEffect( () => {
+		if ( ! formId && ( activeTab === 'entries' || activeTab === 'form' ) ) {
+			setActiveTab( 'utils' );
 		}
-	}, [formId, activeTab]);
+	}, [ formId, activeTab ] );
 
 	// Load settings from storage.
-	useEffect(() => {
-		chrome.storage.local.get(['errorLogPath', 'extensionDirPath'], (result) => {
-			if (result.errorLogPath) {
-				setErrorLogPath(result.errorLogPath);
+	useEffect( () => {
+		chrome.storage.local.get( [ 'errorLogPath', 'extensionDirPath' ], ( result ) => {
+			if ( result.errorLogPath ) {
+				setErrorLogPath( result.errorLogPath );
 			}
-			if (result.extensionDirPath) {
-				setExtensionDirPath(result.extensionDirPath);
+			if ( result.extensionDirPath ) {
+				setExtensionDirPath( result.extensionDirPath );
 			}
-		});
-	}, []);
+		} );
+	}, [] );
 
-	const handleErrorLogPathChange = (e) => {
-		setErrorLogPath(e.target.value);
+	const handleErrorLogPathChange = ( e ) => {
+		setErrorLogPath( e.target.value );
 		// Save to storage.
-		chrome.storage.local.set({ errorLogPath: e.target.value });
+		chrome.storage.local.set( {errorLogPath: e.target.value} );
 	};
 
-	const handleExtensionDirPathChange = (e) => {
-		setExtensionDirPath(e.target.value);
+	const handleExtensionDirPathChange = ( e ) => {
+		setExtensionDirPath( e.target.value );
 		// Save to storage.
-		chrome.storage.local.set({ extensionDirPath: e.target.value });
+		chrome.storage.local.set( {extensionDirPath: e.target.value} );
 	};
 
 	/**
@@ -160,87 +160,87 @@ export function TabPanel() {
 	 * Form-specific tabs are only rendered when formId is available.
 	 */
 	const renderTabContent = () => {
-		switch (activeTab) {
+		switch ( activeTab ) {
 			case 'utils':
-				return <UtilsList key={reloadKey} />;
+				return <UtilsList key={ reloadKey }/>;
 			case 'logs':
-				return <LogsTable key={reloadKey} />;
+				return <LogsTable key={ reloadKey }/>;
 			case 'errorLogs':
-				return <ErrorLog 
-					key={reloadKey} 
-					isActive={activeTab === 'errorLogs'} 
-					errorLogPath={errorLogPath}
-					extensionDirPath={extensionDirPath}
+				return <ErrorLog
+					key={ reloadKey }
+					isActive={ activeTab === 'errorLogs' }
+					errorLogPath={ errorLogPath }
+					extensionDirPath={ extensionDirPath }
 				/>;
 			case 'entries':
-				return formId ? <EntriesTable key={reloadKey} formId={formId} /> : null;
+				return formId ? <EntriesTable key={ reloadKey } formId={ formId }/> : null;
 			case 'form':
-				return formId ? <FormPanel key={reloadKey} formId={formId} /> : null;
+				return formId ? <FormPanel key={ reloadKey } formId={ formId }/> : null;
 			default:
 				return null;
 		}
 	};
 
-	const tabs = getTabs(formId);
+	const tabs = getTabs( formId );
 
 	return (
-		<div className={classNames('tab-panel', { 'dark-theme': isDarkTheme })}>
+		<div className={ classNames( 'tab-panel', {'dark-theme': isDarkTheme} ) }>
 			<div className="tab-panel__header">
 				<div className="tab-panel__toolbar tab-panel__toolbar--tabs">
-					{tabs.map(tab => (
+					{ tabs.map( tab => (
 						<button
-							key={tab.id}
-							className={classNames('tab-panel__tab', {
+							key={ tab.id }
+							className={ classNames( 'tab-panel__tab', {
 								'tab-panel__tab--active': activeTab === tab.id
-							})}
-							onClick={() => setActiveTab(tab.id)}
+							} ) }
+							onClick={ () => setActiveTab( tab.id ) }
 						>
-							{tab.label}
+							{ tab.label }
 						</button>
-					))}
+					) ) }
 				</div>
 				<div className="tab-panel__toolbar tab-panel__toolbar--actions">
-					<button 
-						className="tab-panel__icon-button" 
+					<button
+						className="tab-panel__icon-button"
 						title="Reload"
-						onClick={() => setReloadKey(prev => prev + 1)}
+						onClick={ () => setReloadKey( prev => prev + 1 ) }
 					>
-						<FontAwesomeIcon icon={faSync} />
+						<FontAwesomeIcon icon={ faSync }/>
 					</button>
-					{activeTab === 'errorLogs' && (
-						<button 
-							className="tab-panel__icon-button" 
+					{ activeTab === 'errorLogs' && (
+						<button
+							className="tab-panel__icon-button"
 							title="Clear"
-							onClick={() => {
+							onClick={ () => {
 								// Clear error logs.
-								window.postMessage({ type: 'clearErrorLogs' }, '*');
-							}}
+								window.postMessage( {type: 'clearErrorLogs'}, '*' );
+							} }
 						>
-							<FontAwesomeIcon icon={faBan} />
+							<FontAwesomeIcon icon={ faBan }/>
 						</button>
-					)}
+					) }
 				</div>
 				<div className="tab-panel__toolbar tab-panel__toolbar--settings">
-					<button 
+					<button
 						className="tab-panel__icon-button"
-						onClick={() => setShowSettings(true)}
+						onClick={ () => setShowSettings( true ) }
 						title="Settings"
 					>
-						<FontAwesomeIcon icon={faCog} />
+						<FontAwesomeIcon icon={ faCog }/>
 					</button>
 				</div>
 			</div>
 			<div className="tab-panel__content">
-				{renderTabContent()}
-				{showSettings && (
+				{ renderTabContent() }
+				{ showSettings && (
 					<Settings
-						onClose={() => setShowSettings(false)}
-						errorLogPath={errorLogPath}
-						onErrorLogPathChange={handleErrorLogPathChange}
-						extensionDirPath={extensionDirPath}
-						onExtensionDirPathChange={handleExtensionDirPathChange}
+						onClose={ () => setShowSettings( false ) }
+						errorLogPath={ errorLogPath }
+						onErrorLogPathChange={ handleErrorLogPathChange }
+						extensionDirPath={ extensionDirPath }
+						onExtensionDirPathChange={ handleExtensionDirPathChange }
 					/>
-				)}
+				) }
 			</div>
 		</div>
 	);

@@ -1,12 +1,12 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { TabPanel } from './components/TabPanel';
+import {createRoot} from 'react-dom/client';
+import {TabPanel} from './components/TabPanel';
 import './styles/index.scss';
 
-const container = document.getElementById('root');
-const root = createRoot(container);
+const container = document.getElementById( 'root' );
+const root = createRoot( container );
 root.render(
 	<React.StrictMode>
-		<TabPanel />
+		<TabPanel/>
 	</React.StrictMode>
 );

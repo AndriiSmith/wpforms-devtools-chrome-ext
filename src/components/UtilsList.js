@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { MenuItem } from './MenuItem';
+import React, {useState, useEffect} from 'react';
+import {MenuItem} from './MenuItem';
 
 export function UtilsList() {
-	const [utils, setUtils] = useState([]);
+	const [ utils, setUtils ] = useState( [] );
 
-	useEffect(() => {
+	useEffect( () => {
 		// Recursive function to process menu items.
 		const processMenuItems = () => {
 			const script = `
@@ -31,11 +31,11 @@ export function UtilsList() {
 				getMenuItems(document.querySelector('#wp-admin-bar-wpf-utils-default'));
 			`;
 
-			chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
-				if (!isException && Array.isArray(result)) {
-					setUtils(result);
+			chrome.devtools.inspectedWindow.eval( script, ( result, isException ) => {
+				if ( ! isException && Array.isArray( result ) ) {
+					setUtils( result );
 				}
-			});
+			} );
 		};
 
 		// Get data on initial load.
@@ -43,19 +43,19 @@ export function UtilsList() {
 
 		// Subscribe to page updates.
 		const navigationListener = () => {
-			setTimeout(processMenuItems, 500); // Give time for DOM to load.
+			setTimeout( processMenuItems, 500 ); // Give time for DOM to load.
 		};
 
 		// Subscribe to navigation and update events.
-		chrome.devtools.network.onNavigated.addListener(navigationListener);
+		chrome.devtools.network.onNavigated.addListener( navigationListener );
 
 		// Subscribe to resource events (including reloads).
-		const resourceListener = (resource) => {
-			if (resource.type === 'document' && resource.url === chrome.devtools.inspectedWindow.tabId) {
-				setTimeout(processMenuItems, 500);
+		const resourceListener = ( resource ) => {
+			if ( resource.type === 'document' && resource.url === chrome.devtools.inspectedWindow.tabId ) {
+				setTimeout( processMenuItems, 500 );
 			}
 		};
-		chrome.devtools.network.onRequestFinished.addListener(resourceListener);
+		chrome.devtools.network.onRequestFinished.addListener( resourceListener );
 
 		// Add handler for DOMContentLoaded event.
 		const domLoadedScript = `
@@ -72,36 +72,36 @@ export function UtilsList() {
 				subtree: true
 			});
 		`;
-		
-		chrome.devtools.inspectedWindow.eval(domLoadedScript);
 
-		const messageListener = (event) => {
-			if (event.data.type === 'WPF_UTILS_UPDATED') {
+		chrome.devtools.inspectedWindow.eval( domLoadedScript );
+
+		const messageListener = ( event ) => {
+			if ( event.data.type === 'WPF_UTILS_UPDATED' ) {
 				processMenuItems();
 			}
 		};
-		window.addEventListener('message', messageListener);
+		window.addEventListener( 'message', messageListener );
 
 		return () => {
-			chrome.devtools.network.onNavigated.removeListener(navigationListener);
-			chrome.devtools.network.onRequestFinished.removeListener(resourceListener);
-			window.removeEventListener('message', messageListener);
+			chrome.devtools.network.onNavigated.removeListener( navigationListener );
+			chrome.devtools.network.onRequestFinished.removeListener( resourceListener );
+			window.removeEventListener( 'message', messageListener );
 		};
-	}, []);
+	}, [] );
 
 	// Render loading state if no utils.
-	if (utils.length === 0) {
+	if ( utils.length === 0 ) {
 		return <div className="utils-list utils-list--empty">No utilities found.</div>;
 	}
 
-	console.log('Utils:', utils);
+	console.log( 'Utils:', utils );
 
 	return (
 		<div className="utils-list">
 			<ul className="utils-list__items">
-				{utils.map((item, index) => (
-					<MenuItem key={item.id || index} item={item} />
-				))}
+				{ utils.map( ( item, index ) => (
+					<MenuItem key={ item.id || index } item={ item }/>
+				) ) }
 			</ul>
 		</div>
 	);
