@@ -24,7 +24,7 @@ body {
 		background-color: var(--surface-color);
 		border-bottom: 1px solid var(--border-color);
 		height: 32px;
-		padding: 0 8px;
+		padding: 0 6px;
 		justify-content: space-between;
 		align-items: center;
 	}
@@ -34,21 +34,39 @@ body {
 		align-items: center;
         justify-content: flex-start;
 		gap: 4px;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			width: 1px;
+			height: 16px;
+			background-color: var(--border-color);
+		}
 
 		&--tabs {
 			width: fit-content;
+
+			&::before {
+				display: none;
+			}
 		}
 
 		&--actions {
 			flex: 3;
 			display: flex;
-			padding: 0 4px;
+			padding: 0 6px;
 		}
 
 		&--settings {
             width: fit-content;
-			padding: 0 4px;
+			padding: 0 0 0 4px;
 			align-items: end;
+
+			&::before {
+				display: none;
+			}
 		}
 	}
 
