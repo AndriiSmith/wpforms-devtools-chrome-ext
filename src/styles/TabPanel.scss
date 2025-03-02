@@ -130,15 +130,14 @@ body {
 
 	&__settings-popup {
 		background-color: var(--surface-color);
-		border-radius: 8px;
+		border-radius: 0;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 		width: 600px;
-        height: calc( 100vh - 54px );
-		max-width: 90%;
-		max-height: 90vh;
+        height: calc( 100vh - 34px );
+		max-width: 40%;
 		display: flex;
 		flex-direction: column;
-        margin: 10px;
+        margin: 0;
 	}
 
 	&__settings-header {
