@@ -103,7 +103,7 @@ export function LogsTable() {
 				return;
 			}
 
-			// Create popup container
+			// Create popup container.
 			const popup = document.createElement( 'div' );
 			popup.className = 'wpforms-devtools-popup';
 
@@ -111,26 +111,26 @@ export function LogsTable() {
 			const header = document.createElement( 'div' );
 			header.className = 'wpforms-devtools-popup__header';
 
-			// Create close button
+			// Create close button.
 			const closeButton = document.createElement( 'button' );
 			closeButton.textContent = '×';
 			closeButton.className = 'wpforms-devtools-popup__close';
 			closeButton.onclick = () => popup.remove();
 
-			// Add title
+			// Add title.
 			const title = document.createElement( 'h3' );
 			title.textContent = 'Log Record Details';
 			title.className = 'wpforms-devtools-popup__title';
 
-			// Create content container
+			// Create content container.
 			const content = document.createElement( 'div' );
 			content.className = 'wpforms-devtools-popup__content';
 
-			// Create table for data
+			// Create table for data.
 			const table = document.createElement( 'table' );
 			table.className = 'wpforms-devtools-popup__table';
 
-			// Add data rows
+			// Add data rows.
 			Object.entries( data.data ).forEach( ( [ key, value ] ) => {
 				const row = table.insertRow();
 				const keyCell = row.insertCell();
@@ -146,14 +146,20 @@ export function LogsTable() {
 				}
 			} );
 
-			// Assemble popup
+			// Assemble popup.
 			header.appendChild( closeButton );
 			header.appendChild( title );
 			content.appendChild( table );
 			popup.appendChild( header );
 			popup.appendChild( content );
 
-			// Add to document
+			// Remove previous popup.
+			const existingPopup = document.querySelector( '.wpforms-devtools-popup' );
+			if ( existingPopup ) {
+				existingPopup.remove();
+			}
+
+			// Add to document.
 			document.body.appendChild( popup );
 
 		} catch ( error ) {
