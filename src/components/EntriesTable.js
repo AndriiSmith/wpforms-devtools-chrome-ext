@@ -23,6 +23,42 @@ export function EntriesTable( {formId} ) {
 	useEffect( () => {
 		console.log( 'EntriesTable: Component mounted, setting up observers...' );
 
+		// Function to modify the entries table.
+		const modifyEntriesTable = ( table, doc ) => {
+			// Remove specified elements.
+			table.querySelectorAll( '.check-column, .column-indicators, .column-primary .toggle-row' ).forEach( el => {
+				el.remove();
+			} );
+
+			// Add ID column header.
+			const headerRow = table.querySelector( 'thead tr' );
+			const idHeader = doc.createElement( 'th' );
+			idHeader.textContent = 'ID';
+			idHeader.className = 'column-id';
+			headerRow.insertBefore( idHeader, headerRow.firstChild );
+
+			// Add ID column cells.
+			table.querySelectorAll( 'tbody tr' ).forEach( row => {
+				const viewLink = row.querySelector( 'a.view' );
+				let entryId = '';
+
+				if ( viewLink ) {
+					const href = viewLink.getAttribute( 'href' );
+					const match = href.match( /[?&]entry_id=(\d+)/ );
+					if ( match ) {
+						entryId = match[ 1 ];
+					}
+				}
+
+				const idCell = doc.createElement( 'td' );
+				idCell.textContent = entryId;
+				idCell.className = 'column-id';
+				row.insertBefore( idCell, row.firstChild );
+			} );
+
+			return table;
+		};
+
 		// Function to fetch entries table content.
 		const fetchEntriesTable = async () => {
 			if ( ! formId ) {
@@ -62,37 +98,9 @@ export function EntriesTable( {formId} ) {
 							const table = doc.querySelector( '.wp-list-table' );
 
 							if ( table ) {
-								// Remove specified elements.
-								table.querySelectorAll( '.check-column, .column-indicators, .column-primary .toggle-row' ).forEach( el => {
-									el.remove();
-								} );
-
-								// Add ID column header.
-								const headerRow = table.querySelector( 'thead tr' );
-								const idHeader = doc.createElement( 'th' );
-								idHeader.textContent = 'ID';
-								idHeader.className = 'column-id';
-								headerRow.insertBefore( idHeader, headerRow.firstChild );
-
-								// Add ID column cells.
-								table.querySelectorAll( 'tbody tr' ).forEach( row => {
-									const viewLink = row.querySelector( 'a.view' );
-									let entryId = '';
-
-									if ( viewLink ) {
-										const href = viewLink.getAttribute( 'href' );
-										const match = href.match( /[?&]entry_id=(\d+)/ );
-										if ( match ) {
-											entryId = match[ 1 ];
-										}
-									}
-
-									const idCell = doc.createElement( 'td' );
-									idCell.textContent = entryId;
-									idCell.className = 'column-id';
-									row.insertBefore( idCell, row.firstChild );
-								} );
-
+								// Modify the table structure
+								const modifiedTable = modifyEntriesTable( table, doc );
+								
 								// Modify href attributes for spam and trash links.
 								const script = `
 									(function() {
@@ -104,13 +112,13 @@ export function EntriesTable( {formId} ) {
 
 								chrome.devtools.inspectedWindow.eval( script, ( baseUrl, isException ) => {
 									if ( ! isException && baseUrl ) {
-										table.querySelectorAll( 'a.mark-spam, a.trash' ).forEach( link => {
+										modifiedTable.querySelectorAll( 'a.mark-spam, a.trash' ).forEach( link => {
 											const href = link.getAttribute( 'href' );
 											if ( href && ! href.startsWith( 'http' ) ) {
 												link.setAttribute( 'href', baseUrl + href );
 											}
 										} );
-										setEntriesTable( table.outerHTML );
+										setEntriesTable( modifiedTable.outerHTML );
 									} else {
 										console.error( 'Failed to get base URL:', isException );
 										setEntriesTable( '' );
