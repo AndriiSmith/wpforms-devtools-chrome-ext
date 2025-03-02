@@ -26,8 +26,23 @@ export function EntriesTable( {formId} ) {
 		// Function to modify the entries table.
 		const modifyEntriesTable = ( table, doc ) => {
 			// Remove specified elements.
-			table.querySelectorAll( '.check-column, .column-indicators, .column-primary .toggle-row' ).forEach( el => {
+			table.querySelectorAll( `
+					tfoot,
+					.check-column,
+					.column-indicators,
+					.column-primary .toggle-row,
+					.manage-column .sorting-indicators,
+					.manage-column .screen-reader-text
+				` )
+				.forEach( el => {
 				el.remove();
+			} );
+
+			// Clean up thead cells - remove all HTML tags, keep only text.
+			table.querySelectorAll( 'thead th' ).forEach( th => {
+				const textContent = th.textContent.trim();
+				th.innerHTML = '';
+				th.textContent = textContent;
 			} );
 
 			// Add ID column header.
