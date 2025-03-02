@@ -223,7 +223,7 @@ export function TabPanel() {
 				<div className="tab-panel__toolbar tab-panel__toolbar--settings">
 					<button
 						className="tab-panel__icon-button"
-						onClick={ () => setShowSettings( true ) }
+						onClick={ () => setShowSettings( prevState => ! prevState ) }
 						title="Settings"
 					>
 						<FontAwesomeIcon icon={ faCog }/>
