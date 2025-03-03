@@ -5,8 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 		entry: {
-				panel: './src/panel.js',
-				themeObserver: './src/theme-observer.js'
+				panel: './src/panel.js'
 		},
 		output: {
 				filename: '[name].js',

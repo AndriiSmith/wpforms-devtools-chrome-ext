@@ -47,16 +47,11 @@ export function TabPanel() {
 
 	// Track theme changes.
 	useEffect( () => {
-		if ( window.matchMedia ) {
-			const darkThemeQuery = window.matchMedia( '(prefers-color-scheme: dark)' );
-			setIsDarkTheme( darkThemeQuery.matches );
+		const isDark = chrome.devtools.panels.themeName === 'dark';
 
-			const themeListener = ( e ) => setIsDarkTheme( e.matches );
-			darkThemeQuery.addListener( themeListener );
+		console.log( 'themeName', isDark );
 
-			// Cleanup theme listener on unmount.
-			return () => darkThemeQuery.removeListener( themeListener );
-		}
+		setIsDarkTheme( isDark );
 	}, [] );
 
 	/**
