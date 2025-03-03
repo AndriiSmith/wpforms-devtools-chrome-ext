@@ -3,21 +3,7 @@ import classNames from 'classnames';
 
 export function EntriesTable( {formId} ) {
 	const [ entriesTable, setEntriesTable ] = useState( '' );
-	const [ isDarkTheme, setIsDarkTheme ] = useState( false );
 	const tableRef = useRef( null );
-
-	// Track theme changes.
-	useEffect( () => {
-		if ( window.matchMedia ) {
-			const darkThemeQuery = window.matchMedia( '(prefers-color-scheme: dark)' );
-			setIsDarkTheme( darkThemeQuery.matches );
-
-			const themeListener = ( e ) => setIsDarkTheme( e.matches );
-			darkThemeQuery.addListener( themeListener );
-
-			return () => darkThemeQuery.removeListener( themeListener );
-		}
-	}, [] );
 
 	// Fetch entries when component mounts.
 	useEffect( () => {
@@ -113,7 +99,7 @@ export function EntriesTable( {formId} ) {
 							const table = doc.querySelector( '.wp-list-table' );
 
 							if ( table ) {
-								// Modify the table structure
+								// Modify the table structure.
 								const modifiedTable = modifyEntriesTable( table, doc );
 								
 								// Modify href attributes for spam and trash links.
@@ -284,27 +270,18 @@ export function EntriesTable( {formId} ) {
 		if ( tableRef.current && entriesTable ) {
 			tableRef.current.innerHTML = entriesTable;
 
-			// Store the current table element
-			const table = tableRef.current;
-
-			if ( isDarkTheme ) {
-				table.classList.add( 'wpforms-dark-mode' );
-			} else {
-				table.classList.remove( 'wpforms-dark-mode' );
-			}
-
 			// Add click handler for action links.
-			table.addEventListener( 'click', handleActionClick );
+			tableRef.current.addEventListener( 'click', handleActionClick );
 
 			// Cleanup event listener on unmount.
 			return () => {
-				table?.removeEventListener( 'click', handleActionClick );
+				tableRef.current?.removeEventListener( 'click', handleActionClick );
 			};
 		}
-	}, [ entriesTable, isDarkTheme ] );
+	}, [ entriesTable ] );
 
 	return (
-		<div className={ classNames( 'wpforms-entries-table-wrapper', {'dark-theme': isDarkTheme} ) }>
+		<div className="wpforms-entries-table-wrapper">
 			<div ref={ tableRef } className="wpforms-entries-table"/>
 		</div>
 	);

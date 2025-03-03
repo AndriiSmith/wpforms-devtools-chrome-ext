@@ -3,23 +3,9 @@ import classNames from 'classnames';
 
 export function LogsTable() {
 	const [ logsTable, setLogsTable ] = useState( '' );
-	const [ isDarkTheme, setIsDarkTheme ] = useState( false );
 	const [ wpformsAdmin, setWpformsAdmin ] = useState( null );
 	const [ logDetails, setLogDetails ] = useState( null );
 	const tableRef = useRef( null );
-
-	// Track theme changes.
-	useEffect( () => {
-		if ( window.matchMedia ) {
-			const darkThemeQuery = window.matchMedia( '(prefers-color-scheme: dark)' );
-			setIsDarkTheme( darkThemeQuery.matches );
-
-			const themeListener = ( e ) => setIsDarkTheme( e.matches );
-			darkThemeQuery.addListener( themeListener );
-
-			return () => darkThemeQuery.removeListener( themeListener );
-		}
-	}, [] );
 
 	// Handle table click events.
 	const handleTableClick = ( e ) => {
@@ -289,7 +275,7 @@ export function LogsTable() {
 
 	if ( ! logsTable || logsTable.length === 0 ) {
 		return (
-			<div className={ classNames( 'logs-table logs-table--empty', {'dark-theme': isDarkTheme} ) }>
+			<div className="logs-table logs-table--empty">
 				Loading logs...
 			</div>
 		);
@@ -298,7 +284,7 @@ export function LogsTable() {
 	return (
 		<div
 			ref={ tableRef }
-			className={ classNames( 'logs-table', {'dark-theme': isDarkTheme} ) }
+			className="logs-table"
 			onClick={ handleTableClick }
 		>
 			<div className="logs-table__content" dangerouslySetInnerHTML={ {__html: logsTable} }/>
