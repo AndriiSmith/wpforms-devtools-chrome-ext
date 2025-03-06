@@ -146,7 +146,7 @@ export function LogsTable() {
 			}
 
 			// Add to document.
-			document.body.appendChild( popup );
+			document.querySelector( '.tab-panel' ).appendChild( popup );
 
 		} catch ( error ) {
 			console.error( 'Error processing response:', error );
