@@ -9,6 +9,10 @@
 		width: 100%;
 		border-collapse: collapse;
 
+		a {
+			color: var(--accent-color);
+		}
+
 		.column-id {
 			width: 30px;
             min-width: 30px;
@@ -27,8 +31,7 @@
 			&:hover {
 				background-color: var(--tab-hover-color);
 			}
-		}
-		
+		}		
 
 		th, td {
 			padding: 4px 8px;
